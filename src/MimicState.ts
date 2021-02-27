@@ -55,6 +55,11 @@ export class MimicState {
       this.gameState.otherPlayerStatus = PlayerStatus.JOINING;
 
       conn.on('open', () => {
+        conn.peerConnection.onconnectionstatechange = (_ev: Event) => {
+          if (conn.peerConnection.connectionState === 'disconnected') {
+            this.gameState.otherPlayerStatus = PlayerStatus.DISCONNECTED;
+          }
+        };
         conn.on('close', () => (this.gameState.otherPlayerStatus = PlayerStatus.DISCONNECTED));
         conn.on('data', (data: any) => this.gameState.receiveMessage(JSON.parse(data)));
 
@@ -62,7 +67,8 @@ export class MimicState {
         this.gameState.otherPlayerStatus = PlayerStatus.WAITING;
 
         const nameMsg = new NameMessage(this.name);
-        conn.send(nameMsg);
+        console.log('sending message: ', nameMsg);
+        conn.send(JSON.stringify(nameMsg));
       });
     });
 
@@ -83,7 +89,7 @@ export class MimicState {
         case 'disconnected':
         case 'failed':
           console.log('failed to connect to host, retrying...');
-          this.gameState.otherPlayer = this.peer.connect(this.joinId, { label: this.name });
+          this.joinGame();
           break;
       }
     };

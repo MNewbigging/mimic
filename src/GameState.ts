@@ -23,6 +23,7 @@ export class GameState {
   }
 
   @action public receiveMessage(message: BaseMessage) {
+    console.log(`${this.yourPlayerName} received message from ${this.otherPlayerName}: `, message);
     switch (message.type) {
       case MessageType.NAME:
         this.otherPlayerName = (message as NameMessage).name;
