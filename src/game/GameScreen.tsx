@@ -15,12 +15,14 @@ interface GameProps {
 export class GameScreen extends React.PureComponent<GameProps> {
   public render() {
     const { state } = this.props;
-
+    const hostOrPlayer = state.otherPlayerName
+      ? state.otherPlayerName
+      : `Join id: ${state.yourPlayer.id}`;
     return (
       <div className={'game-screen'}>
         <div className={'player-area'}>
           <div className={'other player'}>
-            <PlayerDetails name={state.otherPlayerName} status={state.otherPlayerStatus} />
+            <PlayerDetails name={hostOrPlayer} status={state.otherPlayerStatus} />
           </div>
         </div>
         <div className={'game-body'}>
