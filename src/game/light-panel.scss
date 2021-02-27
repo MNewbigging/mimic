@@ -11,25 +11,112 @@
     width: 100px;
     height: 100px;
     border-radius: 50%;
+    transition: all 0.2s ease-in;
+    animation: none;
 
     &.red {
       background-color: red;
+      &.flash {
+        animation: redFlash 0.5s ease-in 1;
+      }
     }
 
     &.green {
       background-color: green;
+      &.flash {
+        animation: greenFlash 0.5s ease-in 1;
+      }
     }
 
     &.blue {
       background-color: blue;
+      &.flash {
+        animation: blueFlash 0.5s ease-in 1;
+      }
     }
 
     &.orange {
       background-color: orange;
+      &.flash {
+        animation: orangeFlash 0.5s ease-in 1;
+      }
     }
 
     &.purple {
       background-color: purple;
+      &.flash {
+        animation: purpleFlash 0.5s ease-in 1;
+      }
     }
+  }
+}
+
+@keyframes redFlash {
+  0% {
+    box-shadow: 0 0 0 0 red;
+  }
+
+  50% {
+    box-shadow: 0 0 0 10px red;
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 red;
+  }
+}
+
+@keyframes greenFlash {
+  0% {
+    box-shadow: 0 0 0 0 green;
+  }
+
+  50% {
+    box-shadow: 0 0 0 10px green;
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 green;
+  }
+}
+
+@keyframes blueFlash {
+  0% {
+    box-shadow: 0 0 0 0 blue;
+  }
+
+  50% {
+    box-shadow: 0 0 0 10px blue;
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 blue;
+  }
+}
+
+@keyframes orangeFlash {
+  0% {
+    box-shadow: 0 0 0 0 orange;
+  }
+
+  50% {
+    box-shadow: 0 0 0 10px orange;
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 orange;
+  }
+}
+
+@keyframes purpleFlash {
+  0% {
+    box-shadow: 0 0 0 0 purple;
+  }
+
+  50% {
+    box-shadow: 0 0 0 10px purple;
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 purple;
   }
 }

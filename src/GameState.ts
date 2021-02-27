@@ -85,4 +85,18 @@ export class GameState {
     const alertContent = `Round ${this.round}`;
     alerter.showAlert(alertContent);
   }
+
+  private playSequence() {
+    this.flashLight(0);
+  }
+
+  private flashLight(idx: number) {
+    const dummySequence = ['r', 'g', 'b', 'o', 'p'];
+    document.getElementById(dummySequence[idx]).classList.add('flash');
+    const nextIdx = idx + 1;
+    if (nextIdx >= dummySequence.length) {
+      return;
+    }
+    setTimeout(() => this.flashLight(nextIdx), 550);
+  }
 }
