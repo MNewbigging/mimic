@@ -28,6 +28,7 @@ export class GameState {
 
   // Game props
   @observable public round = 0;
+  @observable public lightPanelActive = false;
 
   constructor(yourPlayer: Peer, yourPlayerName: string) {
     this.yourPlayer = yourPlayer;
@@ -56,17 +57,19 @@ export class GameState {
     }
   }
 
-  public submitSequence() {
-    // Is this a new sequence, or a response to one?
+  @action public addToSequence(id: string) {
+    if (this.yourSequence.length < this.round) {
+      this.yourSequence.push(id);
+    }
   }
 
-  private setYourStatus(status: PlayerStatus) {
-    this.yourPlayerStatus = status;
-    this.sendStatusMessage();
+  @action public removeFromSequence() {
+    this.yourSequence.pop();
   }
 
   private nextRound() {
     this.round++;
+    this.lightPanelActive = true;
     this.sendRoundMessage();
     this.alertRound();
   }
@@ -86,15 +89,17 @@ export class GameState {
     alerter.showAlert(alertContent);
   }
 
-  private playSequence() {
+  @action private playSequence() {
+    this.lightPanelActive = false;
     this.flashLight(0);
   }
 
   private flashLight(idx: number) {
-    const dummySequence = ['r', 'g', 'b', 'o', 'p'];
+    const dummySequence = ['r', 'r', 'b', 'r', 'r'];
     document.getElementById(dummySequence[idx]).classList.add('flash');
     const nextIdx = idx + 1;
     if (nextIdx >= dummySequence.length) {
+      this.lightPanelActive = true;
       return;
     }
     setTimeout(() => this.flashLight(nextIdx), 550);

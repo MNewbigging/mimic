@@ -34,7 +34,13 @@ export class SequencePanel extends React.PureComponent<SequenceProps> {
     const sequence = this.getSequence();
     // render the items that exist in sequence array
     sequence.forEach((seq, i) => {
-      items.push(<div key={`seq-item-${i}`} className={`item ${seq}`}></div>);
+      items.push(
+        <div
+          key={`seq-item-${i}`}
+          className={`item ${seq}`}
+          onClick={() => state.removeFromSequence()}
+        ></div>
+      );
     });
 
     // make up difference to round count with empties

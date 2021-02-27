@@ -7,6 +7,7 @@ import { PlayerDetails } from './PlayerDetails';
 import { SequencePanel } from './SequencePanel';
 
 import './game-screen.scss';
+import { stat } from 'fs';
 
 interface GameProps {
   state: GameState;
@@ -33,7 +34,10 @@ export class GameScreen extends React.PureComponent<GameProps> {
           <div className={'round-marker'}>{roundMarker}</div>
           <div className={'help-text'}>{helpText}</div>
           <div className={'light-panel-area'}>
-            <LightPanel />
+            <LightPanel
+              active={state.lightPanelActive}
+              onClick={(id: string) => state.addToSequence(id)}
+            />
           </div>
           <SequencePanel state={state} />
         </div>

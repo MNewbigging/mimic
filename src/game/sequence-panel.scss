@@ -20,5 +20,21 @@
       border: 1px solid black;
       background-color: grey;
     }
+
+    &.r {
+      background-color: red;
+    }
+    &.g {
+      background-color: green;
+    }
+    &.b {
+      background-color: blue;
+    }
+    &.o {
+      background-color: orange;
+    }
+    &.p {
+      background-color: purple;
+    }
   }
 }
