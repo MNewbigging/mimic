@@ -4,7 +4,6 @@ import { GameState, PlayerStatus } from './GameState';
 
 import Peer from 'peerjs';
 import { NameMessage } from './Messages';
-import { constants } from 'buffer';
 
 export class MimicState {
   // Menu props
@@ -64,10 +63,10 @@ export class MimicState {
         conn.on('data', (data: any) => this.gameState.receiveMessage(JSON.parse(data)));
 
         this.gameState.otherPlayer = conn;
-        this.gameState.otherPlayerStatus = PlayerStatus.WAITING;
+        this.gameState.yourPlayerStatus = PlayerStatus.PLAYING_SEQUENCE;
+        this.gameState.otherPlayerStatus = PlayerStatus.WAITING_SEQUENCE;
 
         const nameMsg = new NameMessage(this.name);
-        console.log('sending message: ', nameMsg);
         conn.send(JSON.stringify(nameMsg));
 
         setTimeout(() => this.gameState.startGame(), 1000);
@@ -77,10 +76,12 @@ export class MimicState {
     this.menuOpen = true;
   }
 
-  public joinGame() {
+  @action public joinGame() {
     console.log('joining game');
 
     this.gameState = new GameState(this.peer, this.name);
+    this.gameState.otherPlayerStatus = PlayerStatus.PLAYING_SEQUENCE;
+    this.gameState.yourPlayerStatus = PlayerStatus.WAITING_SEQUENCE;
 
     // Connect to given host id
     this.gameState.otherPlayer = this.peer.connect(this.joinId, { label: this.name });
