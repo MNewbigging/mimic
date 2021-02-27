@@ -4,6 +4,7 @@
   position: fixed;
   z-index: 100;
   background-color: white;
+  transition: all 1s ease-in-out;
 
   display: flex;
   justify-content: center;
@@ -11,11 +12,25 @@
 
   &.left {
     border-right: 1px solid black;
+    &.open {
+      transform: translate(-100%, 0);
+    }
+
+    &.closed {
+      transform: translate(0, 0);
+    }
   }
 
   &.right {
     left: 50%;
     border-left: 1px solid black;
+    &.open {
+      transform: translate(100%, 0);
+    }
+
+    &.closed {
+      transform: translate(0, 0);
+    }
   }
 
   .form {

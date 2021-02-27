@@ -29,7 +29,11 @@ export class MainMenu extends React.PureComponent<MenuProps> {
               <TextInput text={mState.hostId} />
             </div>
             <div className={'footer'}>
-              <Button text={'Host game'} onClick={() => mState.hostGame()} />
+              <Button
+                text={'Host game'}
+                onClick={() => mState.hostGame()}
+                disabled={mState.name.length === 0}
+              />
             </div>
           </div>
         </div>
@@ -43,7 +47,11 @@ export class MainMenu extends React.PureComponent<MenuProps> {
               <TextInput text={mState.joinId} onChange={(text: string) => mState.setJoinId(text)} />
             </div>
             <div className={'footer'}>
-              <Button text={'Join game'} onClick={() => mState.joinGame()} />
+              <Button
+                text={'Join game'}
+                onClick={() => mState.joinGame()}
+                disabled={mState.name.length === 0 || mState.joinId.length === 0}
+              />
             </div>
           </div>
         </div>

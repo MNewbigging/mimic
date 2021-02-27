@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react';
 import React from 'react';
 
+import { GameScreen } from './game/GameScreen';
 import { MainMenu } from './main-menu/MainMenu';
 import { MimicState } from './MimicState';
 
@@ -11,7 +12,7 @@ export class Mimic extends React.PureComponent {
     return (
       <>
         <MainMenu mState={this.mState} />
-        <div>Mimic</div>
+        <GameScreen />
       </>
     );
   }
