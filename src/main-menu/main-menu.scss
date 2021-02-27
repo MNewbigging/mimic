@@ -1,0 +1,59 @@
+.panel {
+  width: 50%;
+  height: 100%;
+  position: fixed;
+  z-index: 100;
+  background-color: white;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &.left {
+    border-right: 1px solid black;
+  }
+
+  &.right {
+    left: 50%;
+    border-left: 1px solid black;
+  }
+
+  .form {
+    border: 1px solid black;
+    width: 50%;
+    height: 50%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+
+    .header {
+      flex: 1 1 15%;
+      width: 100%;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .body {
+      flex: 1 1 70%;
+      width: 100%;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .footer {
+      flex: 1 1 15%;
+      width: 100%;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+}
