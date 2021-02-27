@@ -1,17 +1,21 @@
 import { action, observable } from 'mobx';
 
+import { GameState } from './GameState';
+
 import Peer from 'peerjs';
 
 export class MimicState {
   // Menu props
-  @observable public menuOpen = true;
+  @observable public menuOpen = false;
   @observable public name = '';
   @observable public hostId = '';
   @observable public joinId = '';
 
   // Player props
   public peer: Peer;
-  @observable ready = false;
+
+  // Game props
+  @observable public gameState?: GameState;
 
   constructor() {
     this.peer = new Peer({
@@ -41,10 +45,9 @@ export class MimicState {
   }
 
   public hostGame() {
-    console.log('hosting game');
-
     // Host enters game immediately
-    this.ready = true;
+    this.gameState = new GameState(this.peer, this.name);
+
     this.menuOpen = true;
   }
 

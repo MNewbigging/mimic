@@ -1,0 +1,1 @@
+- remove suggestions on input focus

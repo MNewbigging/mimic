@@ -12,7 +12,7 @@ export class Mimic extends React.PureComponent {
     return (
       <>
         <MainMenu mState={this.mState} />
-        <GameScreen />
+        {this.mState.gameState && <GameScreen state={this.mState.gameState} />}
       </>
     );
   }
