@@ -67,6 +67,10 @@ export class GameState {
     this.yourSequence.pop();
   }
 
+  public submitSequence() {
+    //
+  }
+
   private nextRound() {
     this.round++;
     this.lightPanelActive = true;

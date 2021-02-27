@@ -1,5 +1,7 @@
 import { observer } from 'mobx-react';
 import React from 'react';
+
+import { Button } from '../core/Button';
 import { GameState, PlayerStatus } from '../GameState';
 
 import './sequence-panel.scss';
@@ -22,8 +24,17 @@ export class SequencePanel extends React.PureComponent<SequenceProps> {
     const panelStyle = this.getPanelStyle();
 
     return (
-      <div className={'sequence-panel'} style={panelStyle}>
-        {this.renderItems()}
+      <div className={'sequence-panel-container'}>
+        <div className={'sequence-panel'} style={panelStyle}>
+          {this.renderItems()}
+        </div>
+        {state.round > 0 && (
+          <Button
+            text={'Submit'}
+            onClick={() => state.submitSequence()}
+            disabled={state.yourSequence.length !== state.round}
+          />
+        )}
       </div>
     );
   }

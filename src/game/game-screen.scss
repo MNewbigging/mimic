@@ -1,55 +1,84 @@
-.game-screen {
+.game-container {
   width: 100%;
   height: 100%;
 
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
   align-items: center;
+  justify-content: center;
 
-  .player-area {
-    flex: 0 0 auto;
-    width: 100%;
+  .game-screen {
+    width: 600px;
+    height: 100%;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: grid;
+    grid-template-areas:
+      '... other-player ...'
+      '... help-text ...'
+      'lights lights lights'
+      '... sequence-panel ...'
+      '... your-player ...';
+    grid-template-columns: minmax(0, 50px) minmax(0, 500px) minmax(0, 50px);
+    grid-template-rows:
+      minmax(0, 100px) minmax(0, calc(100% - 320px / 2)) minmax(0, 120px) minmax(
+        0,
+        calc(100% - 320px / 2)
+      )
+      minmax(0, 100px);
 
-    .player {
-      min-width: 300px;
-      width: 50%;
-      min-height: 100px;
-      height: 100%;
+    .other-player {
+      grid-area: other-player;
+      border-bottom: 1px solid black;
       border-left: 1px solid black;
       border-right: 1px solid black;
-
-      &.other {
-        align-self: flex-start;
-        border-bottom: 1px solid black;
-        border-radius: 0px 0px 5px 5px;
-      }
-
-      &.your {
-        align-self: flex-end;
-        border-top: 1px solid black;
-        border-radius: 5px 5px 0px 0px;
-      }
+      border-radius: 0px 0px 5px 5px;
     }
-  }
 
-  .game-body {
-    flex: 1 1 auto;
-    width: 100%;
+    .help-text {
+      grid-area: help-text;
 
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    align-items: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      align-items: center;
+    }
 
     .light-panel-area {
+      grid-area: lights;
       border: 1px solid black;
-      width: 800px;
-      height: 120px;
+    }
+
+    .sequence-panel-area {
+      grid-area: sequence-panel;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .your-player {
+      grid-area: your-player;
+      border-top: 1px solid black;
+      border-left: 1px solid black;
+      border-right: 1px solid black;
+      border-radius: 5px 5px 0px 0px;
+    }
+
+    .game-body {
+      flex: 1 1 auto;
+      width: 100%;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      align-items: center;
+
+      .light-panel-area {
+        border: 1px solid black;
+        width: 800px;
+        height: 120px;
+        align-self: center;
+      }
     }
   }
 }
