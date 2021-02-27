@@ -4,15 +4,16 @@ import './button.scss';
 
 interface ButtonProps {
   text?: string;
+  onClick: () => void;
 }
 
 export class Button extends React.PureComponent<ButtonProps> {
   public render() {
-    const { text } = this.props;
+    const { text, onClick } = this.props;
     const btnText = text ?? '';
 
     return (
-      <button className={'button'} type={'button'}>
+      <button className={'button'} type={'button'} onClick={onClick}>
         {btnText}
       </button>
     );

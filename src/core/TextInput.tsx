@@ -1,9 +1,34 @@
+import { read } from 'fs';
+import { observer } from 'mobx-react';
 import React from 'react';
 
 import './text-input.scss';
 
-export class TextInput extends React.PureComponent {
+interface InputProps {
+  text: string;
+  onChange?: (text: string) => void;
+  readonly?: boolean;
+}
+
+@observer
+export class TextInput extends React.PureComponent<InputProps> {
   public render() {
-    return <input className={'text-input'} type={'text'} />;
+    const { text, readonly } = this.props;
+    return (
+      <input
+        className={'text-input'}
+        type={'text'}
+        value={text}
+        readOnly={readonly ?? false}
+        onChange={this.onChange}
+      />
+    );
   }
+
+  private readonly onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { readonly, onChange } = this.props;
+    if (!readonly) {
+      onChange(e.target.value);
+    }
+  };
 }
