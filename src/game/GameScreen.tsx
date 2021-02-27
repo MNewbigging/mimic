@@ -18,6 +18,9 @@ export class GameScreen extends React.PureComponent<GameProps> {
     const hostOrPlayer = state.otherPlayerName
       ? state.otherPlayerName
       : `Join id: ${state.yourPlayer.id}`;
+
+    const roundMarker = state.round > 0 ? `ROUND ${state.round}` : '';
+
     return (
       <div className={'game-screen'}>
         <div className={'player-area'}>
@@ -26,7 +29,7 @@ export class GameScreen extends React.PureComponent<GameProps> {
           </div>
         </div>
         <div className={'game-body'}>
-          <div className={'round-marker'}>ROUND 1</div>
+          <div className={'round-marker'}>{roundMarker}</div>
           <div className={'light-panel-area'}>
             <LightPanel />
           </div>

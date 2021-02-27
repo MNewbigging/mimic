@@ -1,0 +1,25 @@
+.alert {
+  z-index: 200;
+  position: absolute;
+  left: 50%;
+  top: 25%;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s ease-in-out;
+
+  width: 300px;
+  height: 120px;
+  border: 1px solid black;
+  background-color: white;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &.open {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  &.closed {
+    transform: translate(-50%, -50%) scale(0);
+  }
+}

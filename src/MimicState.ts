@@ -69,6 +69,8 @@ export class MimicState {
         const nameMsg = new NameMessage(this.name);
         console.log('sending message: ', nameMsg);
         conn.send(JSON.stringify(nameMsg));
+
+        setTimeout(() => this.gameState.startGame(), 1000);
       });
     });
 
