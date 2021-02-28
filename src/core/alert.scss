@@ -23,4 +23,15 @@
   &.closed {
     transform: translate(-50%, -50%) scale(0);
   }
+
+  .endgame-buttons {
+    justify-self: flex-end;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .button {
+      margin-left: 10px;
+    }
+  }
 }

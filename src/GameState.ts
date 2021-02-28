@@ -126,6 +126,17 @@ export class GameState {
     this.otherPlayer?.send(JSON.stringify(msg));
   }
 
+  @action public replayGame(_fromStart: boolean) {
+    // Close the game over alert
+    alerter.closeGameOverAlert();
+    // Reset for a new game
+    this.round = 0;
+    this.gameOver = false;
+    this.winner = '';
+    this.loser = '';
+    // work out who should go first, send message?
+  }
+
   private nextRound() {
     this.round++;
     this.lightPanelActive = true;
@@ -173,9 +184,18 @@ export class GameState {
 
   private checkGameOver() {
     if (this.gameOver) {
+      // Update statuses
+      if (this.winner === this.yourPlayerName) {
+        this.yourPlayerStatus = PlayerStatus.WINNER;
+        this.otherPlayerStatus = PlayerStatus.LOSER;
+      } else {
+        this.yourPlayerStatus = PlayerStatus.LOSER;
+        this.otherPlayerStatus = PlayerStatus.WINNER;
+      }
+      // Show alert
       const title = 'GAME OVER!';
-      const alertContent = `${this.loser} failed to match ${this.winner}'s sequence!`;
-      alerter.showAlert(AlertDuration.LONG, alertContent, title);
+      const content = `${this.loser} failed to match ${this.winner}'s sequence!`;
+      alerter.showGameOverAlert(content, title);
     }
   }
 }
