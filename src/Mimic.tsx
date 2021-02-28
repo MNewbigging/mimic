@@ -13,7 +13,11 @@ export class Mimic extends React.PureComponent {
   public render() {
     return (
       <>
-        <Alert open={alerter.alertShowing} content={alerter.alertContent} />
+        <Alert
+          open={alerter.alertShowing}
+          title={alerter.alertTitle}
+          content={alerter.alertContent}
+        />
         <MainMenu mState={this.mState} />
         {this.mState.gameState && <GameScreen state={this.mState.gameState} />}
       </>

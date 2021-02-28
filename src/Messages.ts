@@ -4,9 +4,9 @@ import { PlayerStatus } from './GameState';
 
 export enum MessageType {
   NAME = 'name',
-  CONFIRM = 'confirm',
-  STATUS = 'status',
   ROUND = 'round',
+  SEQUENCE = 'sequence',
+  RESPONSE = 'response',
 }
 
 export abstract class BaseMessage {
@@ -19,20 +19,20 @@ export class NameMessage extends BaseMessage {
   }
 }
 
-export class ConfirmMessage extends BaseMessage {
-  constructor() {
-    super(MessageType.CONFIRM);
-  }
-}
-
-export class StatusMessage extends BaseMessage {
-  constructor(public status: PlayerStatus) {
-    super(MessageType.STATUS);
-  }
-}
-
 export class RoundMessage extends BaseMessage {
   constructor(public round: number) {
     super(MessageType.ROUND);
+  }
+}
+
+export class SequenceMessage extends BaseMessage {
+  constructor(public sequence: string[]) {
+    super(MessageType.SEQUENCE);
+  }
+}
+
+export class ResponseMessage extends BaseMessage {
+  constructor(public sequence: string[], public match: boolean) {
+    super(MessageType.RESPONSE);
   }
 }

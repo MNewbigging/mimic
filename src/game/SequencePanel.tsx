@@ -77,6 +77,7 @@ export class SequencePanel extends React.PureComponent<SequenceProps> {
       case PlayerStatus.PLAYING_SEQUENCE:
       case PlayerStatus.PLAYING_RESPONSE:
       case PlayerStatus.WAITING_RESPONSE:
+      case PlayerStatus.CHECKING_RESPONSE:
         return state.yourSequence;
       default:
         return [];

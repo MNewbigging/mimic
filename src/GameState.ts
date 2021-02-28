@@ -1,8 +1,15 @@
 import { action, observable } from 'mobx';
 import Peer from 'peerjs';
 
-import { alerter } from './core/Alerter';
-import { BaseMessage, MessageType, NameMessage, RoundMessage, StatusMessage } from './Messages';
+import { AlertDuration, alerter } from './core/Alerter';
+import {
+  BaseMessage,
+  MessageType,
+  NameMessage,
+  ResponseMessage,
+  RoundMessage,
+  SequenceMessage,
+} from './Messages';
 
 export enum PlayerStatus {
   WAITING = 'WAITING...',
@@ -12,6 +19,9 @@ export enum PlayerStatus {
   PLAYING_RESPONSE = 'PLAYING RESPONSE',
   WAITING_SEQUENCE = 'WAITING FOR SEQUENCE',
   WAITING_RESPONSE = 'WAITING FOR RESPONSE',
+  CHECKING_RESPONSE = 'CHECKING RESPONSE',
+  WINNER = 'WON',
+  LOSER = 'LOST',
 }
 
 export class GameState {
@@ -25,10 +35,14 @@ export class GameState {
   public otherPlayer?: Peer.DataConnection;
   @observable public otherPlayerName = '';
   @observable public otherPlayerStatus = PlayerStatus.WAITING;
+  public otherSequence: string[] = [];
 
   // Game props
   @observable public round = 0;
   @observable public lightPanelActive = false;
+  public gameOver = false;
+  public winner = '';
+  public loser = '';
 
   constructor(yourPlayer: Peer, yourPlayerName: string) {
     this.yourPlayer = yourPlayer;
@@ -46,13 +60,26 @@ export class GameState {
       case MessageType.NAME:
         this.otherPlayerName = (message as NameMessage).name;
         break;
-      case MessageType.STATUS:
-        this.otherPlayerStatus = (message as StatusMessage).status;
-        break;
       case MessageType.ROUND:
         // The host will never receive this; host always goes first so they start each round
         this.round = (message as RoundMessage).round;
         this.alertRound();
+        break;
+      case MessageType.SEQUENCE:
+        this.otherSequence = (message as SequenceMessage).sequence;
+        this.playSequence(this.otherPlayerName, this.otherSequence);
+        this.yourPlayerStatus = PlayerStatus.PLAYING_RESPONSE;
+        this.otherPlayerStatus = PlayerStatus.WAITING_RESPONSE;
+        break;
+      case MessageType.RESPONSE:
+        const respMsg = message as ResponseMessage;
+        this.otherSequence = respMsg.sequence;
+        this.gameOver = !respMsg.match;
+        this.winner = this.yourPlayerName;
+        this.loser = this.otherPlayerName;
+        this.playResponse(this.otherPlayerName, this.otherSequence);
+        this.yourPlayerStatus = PlayerStatus.CHECKING_RESPONSE;
+        this.otherPlayerStatus = PlayerStatus.CHECKING_RESPONSE;
         break;
     }
   }
@@ -68,7 +95,35 @@ export class GameState {
   }
 
   public submitSequence() {
-    //
+    // Are we submitting a new sequence or a response to one?
+    let msg: BaseMessage;
+    switch (this.yourPlayerStatus) {
+      case PlayerStatus.PLAYING_SEQUENCE:
+        // Need to send sequence to the other player, so they can respond
+        msg = new SequenceMessage(this.yourSequence);
+        // We are now awaiting other's response sequence
+        this.yourPlayerStatus = PlayerStatus.WAITING_RESPONSE;
+        this.otherPlayerStatus = PlayerStatus.PLAYING_RESPONSE;
+        this.playSequence(this.yourPlayerName, this.yourSequence);
+        break;
+      case PlayerStatus.PLAYING_RESPONSE:
+        let match = true;
+        // Now need to check if response was a match
+        if (this.yourSequence !== this.otherSequence) {
+          // You lost!
+          match = false;
+          this.gameOver = true;
+          this.winner = this.otherPlayerName;
+          this.loser = this.yourPlayerName;
+        }
+        // Need to send response to other player, so they can play it and see result
+        msg = new ResponseMessage(this.yourSequence, match);
+        this.playResponse(this.yourPlayerName, this.yourSequence);
+
+        break;
+    }
+
+    this.otherPlayer?.send(JSON.stringify(msg));
   }
 
   private nextRound() {
@@ -78,34 +133,49 @@ export class GameState {
     this.alertRound();
   }
 
-  private sendStatusMessage() {
-    const msg = new StatusMessage(this.yourPlayerStatus);
-    this.otherPlayer?.send(JSON.stringify(msg));
-  }
-
   private sendRoundMessage() {
     const msg = new RoundMessage(this.round);
     this.otherPlayer?.send(JSON.stringify(msg));
   }
 
   private alertRound() {
-    const alertContent = `Round ${this.round}`;
-    alerter.showAlert(alertContent);
+    const title = `Round ${this.round}`;
+    const content = `${this.yourPlayerName}'s turn...`;
+    alerter.showAlert(AlertDuration.NORMAL, content, title);
   }
 
-  @action private playSequence() {
+  @action private playSequence(name: string, sequence: string[]) {
     this.lightPanelActive = false;
-    this.flashLight(0);
+    const alertContent = `${name}'s sequence...`;
+    alerter.showAlert(AlertDuration.QUICK, alertContent);
+
+    setTimeout(() => this.flashLight(0, sequence), AlertDuration.QUICK + 300);
   }
 
-  private flashLight(idx: number) {
-    const dummySequence = ['r', 'r', 'b', 'r', 'r'];
-    document.getElementById(dummySequence[idx]).classList.add('flash');
+  @action private playResponse(name: string, sequence: string[]) {
+    this.lightPanelActive = false;
+    const alertContent = `${name}'s response...`;
+    alerter.showAlert(AlertDuration.QUICK, alertContent);
+
+    setTimeout(() => this.flashLight(0, sequence), AlertDuration.QUICK + 300);
+  }
+
+  private flashLight(idx: number, sequence: string[]) {
+    document.getElementById(sequence[idx]).classList.add('flash');
     const nextIdx = idx + 1;
-    if (nextIdx >= dummySequence.length) {
+    if (nextIdx >= sequence.length) {
       this.lightPanelActive = true;
+      setTimeout(() => this.checkGameOver(), 550);
       return;
     }
-    setTimeout(() => this.flashLight(nextIdx), 550);
+    setTimeout(() => this.flashLight(nextIdx, sequence), 550);
+  }
+
+  private checkGameOver() {
+    if (this.gameOver) {
+      const title = 'GAME OVER!';
+      const alertContent = `${this.loser} failed to match ${this.winner}'s sequence!`;
+      alerter.showAlert(AlertDuration.LONG, alertContent, title);
+    }
   }
 }
