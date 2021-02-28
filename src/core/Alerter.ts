@@ -6,20 +6,30 @@ export enum AlertDuration {
   FOREVER = 0,
 }
 
+export interface AlertProps {
+  title?: string;
+  content: string;
+  duration: AlertDuration;
+  onHide?: () => void;
+}
+
 class Alerter {
   @observable public alertTitle = '';
   @observable public alertContent = '';
   @observable public alertShowing = false;
+
+  // TODO - Don't like this
   @observable public gameOverAlert = false;
 
-  @action public showAlert(duration: AlertDuration, content: string, title = '') {
-    this.alertTitle = title;
-    this.alertContent = content;
+  @action public showAlert(alertProps: AlertProps) {
+    this.alertTitle = alertProps.title ?? '';
+    this.alertContent = alertProps.content;
     this.alertShowing = true;
 
-    if (duration !== AlertDuration.FOREVER) {
-      setTimeout(this.hideAlert, duration);
-    }
+    setTimeout(() => {
+      this.hideAlert();
+      alertProps.onHide();
+    }, alertProps.duration);
   }
 
   @action public showGameOverAlert(content: string, title: string) {

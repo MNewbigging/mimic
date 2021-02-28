@@ -16,23 +16,22 @@ interface GameProps {
 export class GameScreen extends React.PureComponent<GameProps> {
   public render() {
     const { state } = this.props;
-    const hostOrPlayer = state.otherPlayerName
+    const joinIdOrPlayer = state.otherPlayerName
       ? state.otherPlayerName
       : `Join id: ${state.yourPlayer.id}`;
 
     const roundMarker = state.round > 0 ? `ROUND ${state.round}` : '';
-    const helpText = state.round > 0 ? this.getHelpText() : '';
     const showSequencePanel = state.yourPlayerStatus !== PlayerStatus.WAITING_SEQUENCE;
 
     return (
       <div className={'game-container'}>
         <div className={'game-screen'}>
           <div className={'other-player'}>
-            <PlayerDetails name={hostOrPlayer} status={state.otherPlayerStatus} />
+            <PlayerDetails name={joinIdOrPlayer} status={state.otherPlayerState} />
           </div>
           <div className={'help-text'}>
             <div>{roundMarker}</div>
-            <div>{helpText}</div>
+            <div>{state.helpText}</div>
           </div>
           <div className={'light-panel-area'}>
             <LightPanel

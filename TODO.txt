@@ -1,1 +1,3 @@
 - remove suggestions on input focus
+
+- next turn message - and on new round messages

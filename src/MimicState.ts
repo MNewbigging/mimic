@@ -1,8 +1,7 @@
 import { action, observable } from 'mobx';
+import Peer from 'peerjs';
 
 import { GameState, PlayerStatus } from './GameState';
-
-import Peer from 'peerjs';
 import { NameMessage } from './Messages';
 
 export class MimicState {
@@ -45,31 +44,34 @@ export class MimicState {
     this.joinId = id;
   }
 
+  // Handle all pre-game setup and state here
   @action public hostGame() {
-    // Host enters game immediately
     this.gameState = new GameState(this.peer, this.name);
 
+    // Host expects incoming connection
     this.peer.on('connection', (conn: Peer.DataConnection) => {
       this.gameState.otherPlayerName = conn.label;
-      this.gameState.otherPlayerStatus = PlayerStatus.JOINING;
+      this.gameState.otherPlayerState = PlayerStatus.JOINING;
 
       conn.on('open', () => {
+        // Handle disconnect of joiner
+        // TODO - also show alert on disconnect
         conn.peerConnection.onconnectionstatechange = (_ev: Event) => {
           if (conn.peerConnection.connectionState === 'disconnected') {
-            this.gameState.otherPlayerStatus = PlayerStatus.DISCONNECTED;
+            this.gameState.otherPlayerState = PlayerStatus.DISCONNECTED;
           }
         };
-        conn.on('close', () => (this.gameState.otherPlayerStatus = PlayerStatus.DISCONNECTED));
+        conn.on('close', () => (this.gameState.otherPlayerState = PlayerStatus.DISCONNECTED));
         conn.on('data', (data: any) => this.gameState.receiveMessage(JSON.parse(data)));
 
         this.gameState.otherPlayer = conn;
-        this.gameState.yourPlayerStatus = PlayerStatus.PLAYING_SEQUENCE;
-        this.gameState.otherPlayerStatus = PlayerStatus.WAITING_SEQUENCE;
 
+        // Send joiner initial message with host name for their display
         const nameMsg = new NameMessage(this.name);
         conn.send(JSON.stringify(nameMsg));
 
-        setTimeout(() => this.gameState.startGame(), 1000);
+        // Ready to start the game
+        this.gameState.readyUp(true);
       });
     });
 
@@ -77,18 +79,15 @@ export class MimicState {
   }
 
   @action public joinGame() {
-    console.log('joining game');
-
     this.gameState = new GameState(this.peer, this.name);
-    this.gameState.otherPlayerStatus = PlayerStatus.PLAYING_SEQUENCE;
-    this.gameState.yourPlayerStatus = PlayerStatus.WAITING_SEQUENCE;
 
     // Connect to given host id
-    this.gameState.otherPlayer = this.peer.connect(this.joinId, { label: this.name });
+    const conn = this.peer.connect(this.joinId, { label: this.name });
 
-    this.gameState.otherPlayer.peerConnection.onconnectionstatechange = (_ev: Event) => {
-      const conState = this.gameState.otherPlayer.peerConnection.connectionState;
-      switch (conState) {
+    // Handle the inevitable first failure
+    conn.peerConnection.onconnectionstatechange = (_ev: Event) => {
+      const connState = conn.peerConnection.connectionState;
+      switch (connState) {
         case 'disconnected':
         case 'failed':
           console.log('failed to connect to host, retrying...');
@@ -97,12 +96,13 @@ export class MimicState {
       }
     };
 
-    this.gameState.otherPlayer.on('open', () => {
+    conn.on('open', () => {
       console.log('connected to host');
+      this.gameState.otherPlayer = conn;
       this.gameState.otherPlayer.on('data', (data: any) =>
         this.gameState.receiveMessage(JSON.parse(data))
       );
-
+      this.gameState.readyUp(false);
       this.menuOpen = true;
     });
   }

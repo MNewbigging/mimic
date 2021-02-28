@@ -1,13 +1,11 @@
 import { observer } from 'mobx-react';
 import React from 'react';
 
-import { PlayerStatus } from '../GameState';
-
 import './player-details.scss';
 
 interface DetailsProps {
   name: string;
-  status: PlayerStatus;
+  status: string;
 }
 
 @observer
