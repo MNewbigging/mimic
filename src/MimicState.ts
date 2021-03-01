@@ -1,5 +1,6 @@
 import { action, observable } from 'mobx';
 import Peer from 'peerjs';
+import { AlertDuration, alerter } from './core/Alerter';
 
 import { GameState, PlayerStatus } from './GameState';
 import { NameMessage } from './Messages';
@@ -55,13 +56,12 @@ export class MimicState {
 
       conn.on('open', () => {
         // Handle disconnect of joiner
-        // TODO - also show alert on disconnect
         conn.peerConnection.onconnectionstatechange = (_ev: Event) => {
           if (conn.peerConnection.connectionState === 'disconnected') {
-            this.gameState.otherPlayerState = PlayerStatus.DISCONNECTED;
+            this.onJoinerDisconnect();
           }
         };
-        conn.on('close', () => (this.gameState.otherPlayerState = PlayerStatus.DISCONNECTED));
+        conn.on('close', () => this.onJoinerDisconnect());
         conn.on('data', (data: any) => this.gameState.receiveMessage(JSON.parse(data)));
 
         this.gameState.otherPlayer = conn;
@@ -104,6 +104,15 @@ export class MimicState {
       );
       this.gameState.readyUp(false);
       this.menuOpen = true;
+    });
+  }
+
+  private onJoinerDisconnect() {
+    this.gameState.otherPlayerState = PlayerStatus.DISCONNECTED;
+    alerter.showAlert({
+      title: 'GAME OVER',
+      content: `${this.gameState.otherPlayerName} has disconnected`,
+      duration: AlertDuration.LONG,
     });
   }
 }

@@ -12,20 +12,10 @@ import {
   SequenceMessage,
 } from './Messages';
 
-// Tracks overall state of the game
-export enum GameStates {
-  INIT, // before first round has started; players joining/performing setup
-  PLAYING, // game is in progress
-  ENDED, // game has stopped; someone has won
-}
-
 // Just used for display
 export enum PlayerStatus {
-  WAITING = 'WAITING...',
   JOINING = 'JOINING...',
   DISCONNECTED = 'DISCONNECTED',
-  WINNER = 'WON',
-  LOSER = 'LOST',
 }
 
 // Various states a player can be in on any given turn
@@ -71,7 +61,7 @@ export class GameState {
   // Game props
   @observable public helpText = '';
   @observable public showSequencePanel = false;
-  @observable public round = 0; // TODO - dont think this needs to be observable
+  @observable public round = 0;
   @observable public lightPanelActive = false;
 
   constructor(yourPlayer: Peer, yourPlayerName: string) {
@@ -93,8 +83,7 @@ export class GameState {
     }
 
     // Then kick off game
-    // TODO delay this so joiner has host name when round alert shows
-    this.nextTurnState();
+    setTimeout(() => this.nextTurnState(), 1000);
   }
 
   @action public receiveMessage(message: BaseMessage) {
@@ -245,10 +234,11 @@ export class GameState {
   @action private nextRound() {
     this.round++;
     const title = `Round ${this.round}`;
+    const starter = this.youAreHost ? this.yourPlayerName : this.otherPlayerName;
 
     alerter.showAlert({
       title,
-      content: '',
+      content: `${starter} goes first`,
       duration: AlertDuration.NORMAL,
       onHide: () => this.nextTurnState(),
     });

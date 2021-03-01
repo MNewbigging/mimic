@@ -3,6 +3,7 @@ import { action, observable } from 'mobx';
 export enum AlertDuration {
   QUICK = 1500,
   NORMAL = 2500,
+  LONG = 5000,
 }
 
 export interface AlertProps {
@@ -16,8 +17,6 @@ class Alerter {
   @observable public alertTitle = '';
   @observable public alertContent = '';
   @observable public alertShowing = false;
-
-  // TODO - Don't like this
   @observable public gameOverAlert = false;
 
   @action public showAlert(alertProps: AlertProps) {
