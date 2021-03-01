@@ -26,7 +26,9 @@ class Alerter {
 
     setTimeout(() => {
       this.hideAlert();
-      alertProps.onHide();
+      if (alertProps.onHide) {
+        alertProps.onHide();
+      }
     }, alertProps.duration);
   }
 

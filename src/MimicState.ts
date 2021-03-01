@@ -11,6 +11,7 @@ export class MimicState {
   @observable public name = '';
   @observable public hostId = '';
   @observable public joinId = '';
+  @observable public joining = false;
 
   // Player props
   public peer: Peer;
@@ -45,6 +46,18 @@ export class MimicState {
     this.joinId = id;
   }
 
+  // When to disable host button
+  public disableHostButton() {
+    // If there isn't a valid name
+    // Or if we're currently joining a game
+
+    return this.name.length === 0 || this.joining;
+  }
+
+  public disableJoinbutton() {
+    return this.disableHostButton() || this.joinId.length === 0;
+  }
+
   // Handle all pre-game setup and state here
   @action public hostGame() {
     this.gameState = new GameState(this.peer, this.name);
@@ -58,10 +71,10 @@ export class MimicState {
         // Handle disconnect of joiner
         conn.peerConnection.onconnectionstatechange = (_ev: Event) => {
           if (conn.peerConnection.connectionState === 'disconnected') {
-            this.onJoinerDisconnect();
+            this.onOtherDisconnect();
           }
         };
-        conn.on('close', () => this.onJoinerDisconnect());
+        conn.on('close', () => this.onOtherDisconnect());
         conn.on('data', (data: any) => this.gameState.receiveMessage(JSON.parse(data)));
 
         this.gameState.otherPlayer = conn;
@@ -79,16 +92,22 @@ export class MimicState {
   }
 
   @action public joinGame() {
+    this.joining = true;
     this.gameState = new GameState(this.peer, this.name);
 
     // Connect to given host id
     const conn = this.peer.connect(this.joinId, { label: this.name });
+
+    // Handle invalid host id
+    this.peer.on('error', () => this.invalidHostId());
 
     // Handle the inevitable first failure
     conn.peerConnection.onconnectionstatechange = (_ev: Event) => {
       const connState = conn.peerConnection.connectionState;
       switch (connState) {
         case 'disconnected':
+          this.onOtherDisconnect();
+          break;
         case 'failed':
           console.log('failed to connect to host, retrying...');
           this.joinGame();
@@ -107,12 +126,21 @@ export class MimicState {
     });
   }
 
-  private onJoinerDisconnect() {
+  private onOtherDisconnect() {
     this.gameState.otherPlayerState = PlayerStatus.DISCONNECTED;
     alerter.showAlert({
       title: 'GAME OVER',
       content: `${this.gameState.otherPlayerName} has disconnected`,
       duration: AlertDuration.LONG,
+    });
+  }
+
+  private invalidHostId() {
+    this.joining = false;
+    alerter.showAlert({
+      title: 'Uh oh!',
+      content: 'Cannot connect to that host - are you sure it is correct?',
+      duration: AlertDuration.NORMAL,
     });
   }
 }

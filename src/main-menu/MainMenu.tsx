@@ -32,7 +32,7 @@ export class MainMenu extends React.PureComponent<MenuProps> {
               <Button
                 text={'Host game'}
                 onClick={() => mState.hostGame()}
-                disabled={mState.name.length === 0}
+                disabled={mState.disableHostButton()}
               />
             </div>
           </div>
@@ -50,7 +50,8 @@ export class MainMenu extends React.PureComponent<MenuProps> {
               <Button
                 text={'Join game'}
                 onClick={() => mState.joinGame()}
-                disabled={mState.name.length === 0 || mState.joinId.length === 0}
+                disabled={mState.disableJoinbutton()}
+                loading={mState.joining}
               />
             </div>
           </div>
