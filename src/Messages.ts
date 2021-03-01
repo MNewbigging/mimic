@@ -1,6 +1,7 @@
 // tslint:disable: max-classes-per-file
 
 export enum MessageType {
+  INIT = 'init',
   NAME = 'name',
   ROUND = 'round',
   SEQUENCE = 'sequence',
@@ -10,6 +11,12 @@ export enum MessageType {
 
 export abstract class BaseMessage {
   constructor(public type: MessageType) {}
+}
+
+export class InitMessage extends BaseMessage {
+  constructor(public hostName: string, public startRound: number) {
+    super(MessageType.INIT);
+  }
 }
 
 export class NameMessage extends BaseMessage {

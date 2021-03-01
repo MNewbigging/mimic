@@ -27,6 +27,16 @@ export class MainMenu extends React.PureComponent<MenuProps> {
               <TextInput text={mState.name} onChange={(text: string) => mState.setName(text)} />
               <div>Host id</div>
               <TextInput text={mState.hostId} />
+              <div>Starting round</div>
+              <input
+                className={'round-input'}
+                type={'number'}
+                value={mState.startingRound}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  mState.setStartingRound(parseInt(e.target.value, 10))
+                }
+                min={1}
+              />
             </div>
             <div className={'footer'}>
               <Button

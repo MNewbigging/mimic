@@ -1,4 +1,3 @@
-import { read } from 'fs';
 import { observer } from 'mobx-react';
 import React from 'react';
 
@@ -21,6 +20,7 @@ export class TextInput extends React.PureComponent<InputProps> {
         value={text}
         readOnly={readonly ?? false}
         onChange={this.onChange}
+        autoComplete={'new-password'}
       />
     );
   }

@@ -5,6 +5,7 @@ import { AlertDuration, alerter } from './core/Alerter';
 import { GameUtils } from './game/GameUtils';
 import {
   BaseMessage,
+  InitMessage,
   MessageType,
   NameMessage,
   ResetMessage,
@@ -59,14 +60,17 @@ export class GameState {
   @observable public otherSequence: string[] = [];
 
   // Game props
+  @observable public roundText = '';
   @observable public helpText = '';
   @observable public showSequencePanel = false;
   @observable public round = 0;
   @observable public lightPanelActive = false;
 
-  constructor(yourPlayer: Peer, yourPlayerName: string) {
+  constructor(yourPlayer: Peer, yourPlayerName: string, startingRound?: number) {
     this.yourPlayer = yourPlayer;
     this.yourPlayerName = yourPlayerName;
+    // Only host can set starting round
+    this.round = startingRound ? startingRound - 1 : 0;
   }
 
   // Called when both players are connected and ready to start game
@@ -89,8 +93,11 @@ export class GameState {
   @action public receiveMessage(message: BaseMessage) {
     console.log(`${this.yourPlayerName} received message from ${this.otherPlayerName}: `, message);
     switch (message.type) {
-      case MessageType.NAME:
-        this.otherPlayerName = (message as NameMessage).name;
+      case MessageType.INIT:
+        const initMsg = message as InitMessage;
+        this.otherPlayerName = initMsg.hostName;
+        this.round = initMsg.startRound;
+        this.readyUp(false);
         break;
       case MessageType.SEQUENCE:
         this.otherSequence = (message as SequenceMessage).sequence;
@@ -174,7 +181,12 @@ export class GameState {
   @action private actionNewTurnState() {
     switch (this.yourCurrentTurnState) {
       case PlayerTurnStates.NEXT_ROUND:
-        this.nextRound();
+        // Update light panel
+        this.lightPanelActive = false;
+        // Update sequence panel
+        this.showSequencePanel = false;
+        // Slight delay before next round
+        setTimeout(() => this.nextRound(), 1000);
         break;
       case PlayerTurnStates.PLAY_SEQ:
         // Update help text
@@ -234,6 +246,7 @@ export class GameState {
   @action private nextRound() {
     this.round++;
     const title = `Round ${this.round}`;
+    this.roundText = title;
     const starter = this.youAreHost ? this.yourPlayerName : this.otherPlayerName;
 
     alerter.showAlert({

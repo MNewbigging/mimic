@@ -3,7 +3,7 @@ import Peer from 'peerjs';
 import { AlertDuration, alerter } from './core/Alerter';
 
 import { GameState, PlayerStatus } from './GameState';
-import { NameMessage } from './Messages';
+import { InitMessage, NameMessage } from './Messages';
 
 export class MimicState {
   // Menu props
@@ -12,6 +12,7 @@ export class MimicState {
   @observable public hostId = '';
   @observable public joinId = '';
   @observable public joining = false;
+  @observable public startingRound = 1;
 
   // Player props
   public peer: Peer;
@@ -46,7 +47,10 @@ export class MimicState {
     this.joinId = id;
   }
 
-  // When to disable host button
+  @action public setStartingRound(round: number) {
+    this.startingRound = round;
+  }
+
   public disableHostButton() {
     // If there isn't a valid name
     // Or if we're currently joining a game
@@ -58,9 +62,8 @@ export class MimicState {
     return this.disableHostButton() || this.joinId.length === 0;
   }
 
-  // Handle all pre-game setup and state here
   @action public hostGame() {
-    this.gameState = new GameState(this.peer, this.name);
+    this.gameState = new GameState(this.peer, this.name, this.startingRound);
 
     // Host expects incoming connection
     this.peer.on('connection', (conn: Peer.DataConnection) => {
@@ -79,9 +82,9 @@ export class MimicState {
 
         this.gameState.otherPlayer = conn;
 
-        // Send joiner initial message with host name for their display
-        const nameMsg = new NameMessage(this.name);
-        conn.send(JSON.stringify(nameMsg));
+        // Send joiner init message for their game setup
+        const initMsg = new InitMessage(this.name, this.startingRound - 1);
+        conn.send(JSON.stringify(initMsg));
 
         // Ready to start the game
         this.gameState.readyUp(true);
@@ -121,7 +124,7 @@ export class MimicState {
       this.gameState.otherPlayer.on('data', (data: any) =>
         this.gameState.receiveMessage(JSON.parse(data))
       );
-      this.gameState.readyUp(false);
+
       this.menuOpen = true;
     });
   }
