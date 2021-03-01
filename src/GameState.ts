@@ -8,7 +8,6 @@ import {
   MessageType,
   NameMessage,
   ResponseMessage,
-  RoundMessage,
   SequenceMessage,
 } from './Messages';
 
@@ -24,15 +23,11 @@ export enum PlayerStatus {
   WAITING = 'WAITING...',
   JOINING = 'JOINING...',
   DISCONNECTED = 'DISCONNECTED',
-  PLAYING_SEQUENCE = 'PLAYING SEQUENCE',
-  PLAYING_RESPONSE = 'PLAYING RESPONSE',
-  WAITING_SEQUENCE = 'WAITING FOR SEQUENCE',
-  WAITING_RESPONSE = 'WAITING FOR RESPONSE',
-  CHECKING_RESPONSE = 'CHECKING RESPONSE',
   WINNER = 'WON',
   LOSER = 'LOST',
 }
 
+// Various states a player can be in on any given turn
 enum PlayerTurnStates {
   NEXT_ROUND = 'NEXT ROUND',
   PLAY_SEQ = 'PLAYING SEQUENCE',
@@ -61,7 +56,6 @@ export class GameState {
   // Current player props
   public yourPlayer: Peer;
   public yourPlayerName: string;
-  @observable public yourPlayerStatus = PlayerStatus.WAITING;
   @observable public yourSequence: string[] = [];
   public yourTurnStates: string[] = [];
   @observable public yourCurrentTurnState = 'WAITING';
@@ -69,17 +63,14 @@ export class GameState {
   // Other player props
   public otherPlayer?: Peer.DataConnection;
   @observable public otherPlayerName = '';
-  @observable public otherPlayerState = '';
+  @observable public otherPlayerState = 'WAITING';
   @observable public otherSequence: string[] = [];
 
   // Game props
   @observable public helpText = '';
-  public gameStatus = GameStates.INIT;
-  @observable public round = 0;
+  @observable public showSequencePanel = false;
+  @observable public round = 0; // TODO - dont think this needs to be observable
   @observable public lightPanelActive = false;
-  public gameOver = false;
-  public winner = '';
-  public loser = '';
 
   constructor(yourPlayer: Peer, yourPlayerName: string) {
     this.yourPlayer = yourPlayer;
@@ -99,6 +90,7 @@ export class GameState {
     }
 
     // Then kick off game
+    // TODO delay this so joiner has host name when round alert shows
     this.nextTurnState();
   }
 
@@ -111,18 +103,10 @@ export class GameState {
       case MessageType.SEQUENCE:
         this.otherSequence = (message as SequenceMessage).sequence;
         this.playSequence(this.otherPlayerName, this.otherSequence);
-        this.yourPlayerStatus = PlayerStatus.PLAYING_RESPONSE;
-        this.otherPlayerState = PlayerStatus.WAITING_RESPONSE;
         break;
       case MessageType.RESPONSE:
-        const respMsg = message as ResponseMessage;
-        this.otherSequence = respMsg.sequence;
-        this.gameOver = !respMsg.match;
-        this.winner = this.yourPlayerName;
-        this.loser = this.otherPlayerName;
+        this.otherSequence = (message as ResponseMessage).sequence;
         this.playResponse(this.otherPlayerName, this.otherSequence);
-        this.yourPlayerStatus = PlayerStatus.CHECKING_RESPONSE;
-        this.otherPlayerState = PlayerStatus.CHECKING_RESPONSE;
         break;
     }
   }
@@ -138,45 +122,36 @@ export class GameState {
   }
 
   public submitSequence() {
+    // Prevent further interaction with light panel immediately
+    this.lightPanelActive = false;
+
     // Are we submitting a new sequence or a response to one?
-    let msg: BaseMessage;
-    switch (this.yourPlayerStatus) {
-      case PlayerStatus.PLAYING_SEQUENCE:
-        // Need to send sequence to the other player, so they can respond
-        msg = new SequenceMessage(this.yourSequence);
-        // We are now awaiting other's response sequence
-        this.yourPlayerStatus = PlayerStatus.WAITING_RESPONSE;
-        this.otherPlayerState = PlayerStatus.PLAYING_RESPONSE;
+    switch (this.yourCurrentTurnState) {
+      case PlayerTurnStates.PLAY_SEQ:
+        // Send sequence to other player so they can respond
+        const seqMsg = new SequenceMessage(this.yourSequence);
+        this.otherPlayer?.send(JSON.stringify(seqMsg));
+        // Start playback of your sequence
         this.playSequence(this.yourPlayerName, this.yourSequence);
         break;
-      case PlayerStatus.PLAYING_RESPONSE:
-        const match = GameUtils.doSequencesMatch(this.yourSequence, this.otherSequence);
-        // Now need to check if response was a match
-        if (!match) {
-          // You lost!
-          this.gameOver = true;
-          this.winner = this.otherPlayerName;
-          this.loser = this.yourPlayerName;
-        }
-        // Need to send response to other player, so they can play it and see result
-        this.yourPlayerStatus = PlayerStatus.CHECKING_RESPONSE;
-        this.otherPlayerState = PlayerStatus.CHECKING_RESPONSE;
-        msg = new ResponseMessage(this.yourSequence, match);
+      case PlayerTurnStates.PLAY_RESP:
+        // Send response sequence to other player to view
+        const respMsg = new ResponseMessage(this.yourSequence);
+        this.otherPlayer?.send(JSON.stringify(respMsg));
+        // Start playback of your response
         this.playResponse(this.yourPlayerName, this.yourSequence);
         break;
     }
-
-    this.otherPlayer?.send(JSON.stringify(msg));
   }
 
   @action public replayGame(_fromStart: boolean) {
     // Close the game over alert
     alerter.closeGameOverAlert();
     // Reset for a new game
-    this.round = 0;
-    this.gameOver = false;
-    this.winner = '';
-    this.loser = '';
+    // this.round = 0;
+    // this.gameOver = false;
+    // this.winner = '';
+    // this.loser = '';
     // work out who should go first, send message?
   }
 
@@ -206,18 +181,54 @@ export class GameState {
       case PlayerTurnStates.PLAY_SEQ:
         // Update help text
         this.helpText = `${this.otherPlayerName} is waiting for your sequence`;
+        // Update other player state
+        this.otherPlayerState = PlayerTurnStates.WAIT_SEQ;
+        // Update light panel
+        this.lightPanelActive = true;
+        // Update sequence panel
+        this.showSequencePanel = true;
+        // Clear previous sequence
+        this.yourSequence = [];
+        // Player then builds their sequence, and calls submitSequence when done
+        // That will call playSequence, which calls nextTurnState on playback end
         break;
       case PlayerTurnStates.WAIT_SEQ:
         // Update help text
         this.helpText = `${this.otherPlayerName} is making their sequence`;
+        // Update other player state
+        this.otherPlayerState = PlayerTurnStates.PLAY_SEQ;
+        // Update light panel
+        this.lightPanelActive = false;
+        // Update sequence panel
+        this.showSequencePanel = false;
+        // On receiving a sequence message, will call playSequence
+        // That calls nextTurnState on playback end
         break;
       case PlayerTurnStates.PLAY_RESP:
         // Update help text
         this.helpText = `${this.otherPlayerName} is waiting for your response`;
+        // Update other player state
+        this.otherPlayerState = PlayerTurnStates.WAIT_RESP;
+        // Update light panel
+        this.lightPanelActive = true;
+        // Update sequence panel
+        this.showSequencePanel = true;
+        // Clear previous sequence
+        this.yourSequence = [];
+        // Player then builds response, and calls submitSequence when done
+        // That will call playResponse, which calls nextTurnState on playback end (if game didn't end)
         break;
       case PlayerTurnStates.WAIT_RESP:
         // Update help text
         this.helpText = `${this.otherPlayerName} is making their response`;
+        // Update other player state
+        this.otherPlayerState = PlayerTurnStates.PLAY_RESP;
+        // Update light panel
+        this.lightPanelActive = false;
+        // Update sequence panel
+        this.showSequencePanel = true;
+        // On receive a response message, will call playResponse
+        // That calls nextTurnState on playback end (if game didn't end)
         break;
     }
   }
@@ -240,53 +251,48 @@ export class GameState {
   }
 
   @action private playSequence(name: string, sequence: string[]) {
-    this.lightPanelActive = false;
-    const alertContent = `${name}'s sequence...`;
-    //alerter.showAlert(AlertDuration.QUICK, alertContent);
-
-    // Timeout here is to allow time for alert to hide
-    setTimeout(
-      () => GameUtils.flashLight(0, sequence, this.onSequenceEnd),
-      AlertDuration.QUICK + 300
-    );
+    // This shows the alert - when alert hides it starts playback -
+    // when that's done it moves to next turn state
+    alerter.showAlert({
+      title: 'New sequence!',
+      content: `${name}'s sequence...`,
+      duration: AlertDuration.NORMAL,
+      onHide: () => {
+        GameUtils.flashLight(0, sequence, () => {
+          this.nextTurnState();
+        });
+      },
+    });
   }
 
   @action private playResponse(name: string, sequence: string[]) {
-    this.lightPanelActive = false;
-    const alertContent = `${name}'s response...`;
-    //alerter.showAlert(AlertDuration.QUICK, alertContent);
-
-    setTimeout(
-      () => GameUtils.flashLight(0, sequence, this.onResponseEnd),
-      AlertDuration.QUICK + 300
-    );
+    // This shows the alert - when that hides it starts playback -
+    // when that's done it checks for game over in onResponseEnd
+    alerter.showAlert({
+      title: 'New response!',
+      content: `${name}'s response...`,
+      duration: AlertDuration.NORMAL,
+      onHide: () => {
+        GameUtils.flashLight(0, sequence, this.onResponseEnd);
+      },
+    });
   }
 
-  private readonly onSequenceEnd = () => {
-    this.lightPanelActive = true;
-  };
-
   private readonly onResponseEnd = () => {
-    // Game might have ended
-    if (this.gameOver) {
+    // Check for game over
+    const match = GameUtils.doSequencesMatch(this.yourSequence, this.otherSequence);
+    if (!match) {
+      // TODO - refactor game over logic
       this.showGameOver();
     } else {
-      this.lightPanelActive = true;
+      this.nextTurnState();
     }
   };
 
   private showGameOver() {
-    // Update statuses
-    if (this.winner === this.yourPlayerName) {
-      this.yourPlayerStatus = PlayerStatus.WINNER;
-      this.otherPlayerState = PlayerStatus.LOSER;
-    } else {
-      this.yourPlayerStatus = PlayerStatus.LOSER;
-      this.otherPlayerState = PlayerStatus.WINNER;
-    }
     // Show alert
     const title = 'GAME OVER!';
-    const content = `${this.loser} failed to match ${this.winner}'s sequence!`;
+    const content = `Somebody lost`;
     alerter.showGameOverAlert(content, title);
   }
 }

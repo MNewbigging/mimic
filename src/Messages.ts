@@ -32,7 +32,7 @@ export class SequenceMessage extends BaseMessage {
 }
 
 export class ResponseMessage extends BaseMessage {
-  constructor(public sequence: string[], public match: boolean) {
+  constructor(public sequence: string[]) {
     super(MessageType.RESPONSE);
   }
 }

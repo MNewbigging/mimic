@@ -2,7 +2,7 @@ import { observer } from 'mobx-react';
 import React from 'react';
 
 import { Button } from '../core/Button';
-import { GameState, PlayerStatus } from '../GameState';
+import { GameState } from '../GameState';
 
 import './sequence-panel.scss';
 
@@ -10,6 +10,9 @@ interface SequenceProps {
   state: GameState;
 }
 
+/**
+ * Submit button only active when sequence length = round count (logic should be elsewhere)
+ */
 @observer
 export class SequencePanel extends React.PureComponent<SequenceProps> {
   private readonly itemSize = 30;
@@ -28,13 +31,11 @@ export class SequencePanel extends React.PureComponent<SequenceProps> {
         <div className={'sequence-panel'} style={panelStyle}>
           {this.renderItems()}
         </div>
-        {state.round > 0 && (
-          <Button
-            text={'Submit'}
-            onClick={() => state.submitSequence()}
-            disabled={state.yourSequence.length !== state.round}
-          />
-        )}
+        <Button
+          text={'Submit'}
+          onClick={() => state.submitSequence()}
+          disabled={state.yourSequence.length !== state.round}
+        />
       </div>
     );
   }
@@ -42,7 +43,7 @@ export class SequencePanel extends React.PureComponent<SequenceProps> {
   private renderItems() {
     const { state } = this.props;
     const items: JSX.Element[] = [];
-    const sequence = this.getSequence();
+    const sequence = state.yourSequence;
     // render the items that exist in sequence array
     sequence.forEach((seq, i) => {
       items.push(
@@ -63,43 +64,13 @@ export class SequencePanel extends React.PureComponent<SequenceProps> {
     return items;
   }
 
-  /**
-   * When are sequences valid:
-   * PLAYING_SEQ - yourSequence
-   * PLAYING_RESP - yourSequence
-   * WAITING_SEQ - nothing (your last seq already gone)
-   * WAITING_RESP - yourSequence
-   */
-  private readonly getSequence = () => {
-    const { state } = this.props;
-
-    switch (state.yourPlayerStatus) {
-      case PlayerStatus.PLAYING_SEQUENCE:
-      case PlayerStatus.PLAYING_RESPONSE:
-      case PlayerStatus.WAITING_RESPONSE:
-      case PlayerStatus.CHECKING_RESPONSE:
-        return state.yourSequence;
-      default:
-        return [];
-    }
-  };
-
   private getPanelStyle() {
     const { state } = this.props;
 
     // Check the length - based on round since sequence might not have stuff in it yet
     const itemsCount = state.round;
 
-    // If game not started, size is 0
-    if (itemsCount === 0) {
-      return {
-        width: '0px',
-        height: '0px',
-        border: 'none',
-      };
-    }
-
-    // Otherwise, work out what panel size should be (+2 accounts for border - box-sizing on)
+    // Work out what panel size should be (+2 accounts for border - box-sizing on)
     const w = this.getPanelWidth(itemsCount) + 2;
     const h = this.getPanelHeight(itemsCount) + 2;
 

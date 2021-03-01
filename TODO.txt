@@ -1,3 +1,7 @@
 - remove suggestions on input focus
 
 - next turn message - and on new round messages
+
+
+- delay start of game so joiner has host name when alert shows
+- delay new round message

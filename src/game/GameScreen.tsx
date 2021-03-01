@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react';
 import React from 'react';
 
-import { GameState, PlayerStatus } from '../GameState';
+import { GameState } from '../GameState';
 import { LightPanel } from './LightPanel';
 import { PlayerDetails } from './PlayerDetails';
 import { SequencePanel } from './SequencePanel';
@@ -21,7 +21,6 @@ export class GameScreen extends React.PureComponent<GameProps> {
       : `Join id: ${state.yourPlayer.id}`;
 
     const roundMarker = state.round > 0 ? `ROUND ${state.round}` : '';
-    const showSequencePanel = state.yourPlayerStatus !== PlayerStatus.WAITING_SEQUENCE;
 
     return (
       <div className={'game-container'}>
@@ -40,35 +39,13 @@ export class GameScreen extends React.PureComponent<GameProps> {
             />
           </div>
           <div className={'sequence-panel-area'}>
-            {showSequencePanel && <SequencePanel state={state} />}
+            {state.showSequencePanel && <SequencePanel state={state} />}
           </div>
           <div className={'your-player'}>
-            <PlayerDetails name={state.yourPlayerName} status={state.yourPlayerStatus} />
+            <PlayerDetails name={state.yourPlayerName} status={state.yourCurrentTurnState} />
           </div>
         </div>
       </div>
     );
   }
-
-  private readonly getHelpText = () => {
-    const { state } = this.props;
-    const otherPlayer = state.otherPlayerName;
-    let helpText = `${otherPlayer} `;
-    switch (state.yourPlayerStatus) {
-      case PlayerStatus.PLAYING_SEQUENCE:
-        helpText += `is waiting for your sequence!`;
-        break;
-      case PlayerStatus.PLAYING_RESPONSE:
-        helpText += `is waiting for your response!`;
-        break;
-      case PlayerStatus.WAITING_SEQUENCE:
-        helpText += `is making their sequence!`;
-        break;
-      case PlayerStatus.WAITING_RESPONSE:
-        helpText += `is making their response!`;
-        break;
-    }
-
-    return helpText;
-  };
 }
