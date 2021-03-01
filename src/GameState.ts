@@ -289,7 +289,7 @@ export class GameState {
     // Check for game over
     const match = GameUtils.doSequencesMatch(this.yourSequence, this.otherSequence);
     if (!match) {
-      this.showGameOver();
+      setTimeout(() => this.showGameOver(), 1000);
     } else {
       this.nextTurnState();
     }
