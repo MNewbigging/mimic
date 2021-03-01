@@ -3,7 +3,6 @@ import { action, observable } from 'mobx';
 export enum AlertDuration {
   QUICK = 1500,
   NORMAL = 2500,
-  FOREVER = 0,
 }
 
 export interface AlertProps {

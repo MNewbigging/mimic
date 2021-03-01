@@ -5,3 +5,8 @@
 
 - delay start of game so joiner has host name when alert shows
 - delay new round message
+- maybe a general delay between states
+
+
+- new round starter logic (who starts that round?)
+-- both states will be at NEW_ROUND which doesnt' say much (infer from last?)

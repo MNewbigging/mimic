@@ -7,6 +7,7 @@ import {
   BaseMessage,
   MessageType,
   NameMessage,
+  ResetMessage,
   ResponseMessage,
   SequenceMessage,
 } from './Messages';
@@ -59,6 +60,7 @@ export class GameState {
   @observable public yourSequence: string[] = [];
   public yourTurnStates: string[] = [];
   @observable public yourCurrentTurnState = 'WAITING';
+  private youAreHost = false;
 
   // Other player props
   public otherPlayer?: Peer.DataConnection;
@@ -79,6 +81,7 @@ export class GameState {
 
   // Called when both players are connected and ready to start game
   public readyUp(host: boolean) {
+    this.youAreHost = host;
     // Initialise player turn state based on whether they're host or not
     // Put to last item, so when we start it'll move to first item
     if (host) {
@@ -107,6 +110,11 @@ export class GameState {
       case MessageType.RESPONSE:
         this.otherSequence = (message as ResponseMessage).sequence;
         this.playResponse(this.otherPlayerName, this.otherSequence);
+        break;
+      case MessageType.RESET:
+        alerter.closeGameOverAlert();
+        this.round = (message as ResetMessage).round;
+        this.readyUp(this.youAreHost);
         break;
     }
   }
@@ -144,15 +152,16 @@ export class GameState {
     }
   }
 
-  @action public replayGame(_fromStart: boolean) {
+  @action public replayGame(fromStart: boolean) {
     // Close the game over alert
     alerter.closeGameOverAlert();
     // Reset for a new game
-    // this.round = 0;
-    // this.gameOver = false;
-    // this.winner = '';
-    // this.loser = '';
-    // work out who should go first, send message?
+    this.round = fromStart ? 0 : this.round - 1;
+    // Tell other player to reset as well
+    const resetMsg = new ResetMessage(this.round);
+    this.otherPlayer?.send(JSON.stringify(resetMsg));
+    // Then restart
+    this.readyUp(this.youAreHost);
   }
 
   private nextTurnState() {
@@ -236,15 +245,10 @@ export class GameState {
   @action private nextRound() {
     this.round++;
     const title = `Round ${this.round}`;
-    const starter =
-      this.yourCurrentTurnState === PlayerTurnStates.PLAY_SEQ
-        ? this.yourPlayerName
-        : this.otherPlayerName;
-    const content = starter + ' starts';
 
     alerter.showAlert({
       title,
-      content,
+      content: '',
       duration: AlertDuration.NORMAL,
       onHide: () => this.nextTurnState(),
     });
@@ -282,7 +286,6 @@ export class GameState {
     // Check for game over
     const match = GameUtils.doSequencesMatch(this.yourSequence, this.otherSequence);
     if (!match) {
-      // TODO - refactor game over logic
       this.showGameOver();
     } else {
       this.nextTurnState();
@@ -290,9 +293,14 @@ export class GameState {
   };
 
   private showGameOver() {
-    // Show alert
     const title = 'GAME OVER!';
-    const content = `Somebody lost`;
+
+    const winner =
+      this.yourCurrentTurnState === PlayerTurnStates.PLAY_RESP
+        ? this.otherPlayerName
+        : this.yourPlayerName;
+
+    const content = `${winner} won!`;
     alerter.showGameOverAlert(content, title);
   }
 }

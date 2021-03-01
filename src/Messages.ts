@@ -1,12 +1,11 @@
 // tslint:disable: max-classes-per-file
 
-import { PlayerStatus } from './GameState';
-
 export enum MessageType {
   NAME = 'name',
   ROUND = 'round',
   SEQUENCE = 'sequence',
   RESPONSE = 'response',
+  RESET = 'reset',
 }
 
 export abstract class BaseMessage {
@@ -34,5 +33,11 @@ export class SequenceMessage extends BaseMessage {
 export class ResponseMessage extends BaseMessage {
   constructor(public sequence: string[]) {
     super(MessageType.RESPONSE);
+  }
+}
+
+export class ResetMessage extends BaseMessage {
+  constructor(public round: number) {
+    super(MessageType.RESET);
   }
 }
