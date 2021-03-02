@@ -2,6 +2,7 @@ import { action, observable } from 'mobx';
 import Peer from 'peerjs';
 
 import { AlertDuration, alerter } from './core/Alerter';
+import { Dialogs, dialogState } from './core/DialogState';
 import { GameUtils } from './game/GameUtils';
 import {
   BaseMessage,
@@ -65,6 +66,7 @@ export class GameState {
   @observable public round = 0;
   @observable public lightPanelActive = false;
   @observable public enableSubmitSeqBtn = false;
+  @observable public winner = '';
 
   constructor(yourPlayer: Peer, yourPlayerName: string, startingRound?: number) {
     this.yourPlayer = yourPlayer;
@@ -109,7 +111,7 @@ export class GameState {
         this.playResponse(this.otherPlayerName, this.otherSequence);
         break;
       case MessageType.RESET:
-        alerter.closeGameOverAlert();
+        dialogState.hideDialog();
         this.round = (message as ResetMessage).round;
         this.readyUp(this.youAreHost);
         break;
@@ -162,8 +164,8 @@ export class GameState {
   }
 
   @action public replayGame(fromStart: boolean) {
-    // Close the game over alert
-    alerter.closeGameOverAlert();
+    // Close the game over dialog
+    dialogState.hideDialog();
     // Reset for a new game
     this.round = fromStart ? 0 : this.round - 1;
     // Tell other player to reset as well
@@ -312,15 +314,12 @@ export class GameState {
     }
   };
 
-  private showGameOver() {
-    const title = 'GAME OVER!';
-
-    const winner =
+  @action private showGameOver() {
+    this.winner =
       this.yourCurrentTurnState === PlayerTurnStates.PLAY_RESP
         ? this.otherPlayerName
         : this.yourPlayerName;
 
-    const content = `${winner} won!`;
-    alerter.showGameOverAlert(content, title);
+    dialogState.showDialog(Dialogs.GAME_OVER);
   }
 }

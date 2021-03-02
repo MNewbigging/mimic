@@ -20,8 +20,6 @@ export class Mimic extends React.PureComponent {
           open={alerter.alertShowing}
           title={alerter.alertTitle}
           content={alerter.alertContent}
-          showEndGameBtns={alerter.gameOverAlert}
-          onReplayClick={(start: boolean) => this.mState.gameState?.replayGame(start)}
         />
         <HashRouter>
           <Switch>

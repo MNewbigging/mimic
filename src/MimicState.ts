@@ -1,6 +1,7 @@
 import { action, observable } from 'mobx';
 import Peer from 'peerjs';
 import { AlertDuration, alerter } from './core/Alerter';
+import { Dialogs, dialogState } from './core/DialogState';
 
 import { GameState, PlayerStatus } from './GameState';
 import { InitMessage } from './Messages';

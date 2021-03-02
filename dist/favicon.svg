@@ -1,0 +1,25 @@
+<svg id="Component_2_1" data-name="Component 2 – 1" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 13 13">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #ce2e4d;
+      }
+
+      .cls-2 {
+        fill: #3896e6;
+      }
+
+      .cls-3 {
+        fill: #48c435;
+      }
+
+      .cls-4 {
+        fill: #ff8c42;
+      }
+    </style>
+  </defs>
+  <circle id="Ellipse_3" data-name="Ellipse 3" class="cls-1" cx="3" cy="3" r="3"/>
+  <circle id="Ellipse_4" data-name="Ellipse 4" class="cls-2" cx="3" cy="3" r="3" transform="translate(7)"/>
+  <circle id="Ellipse_5" data-name="Ellipse 5" class="cls-3" cx="3" cy="3" r="3" transform="translate(0 7)"/>
+  <circle id="Ellipse_6" data-name="Ellipse 6" class="cls-4" cx="3" cy="3" r="3" transform="translate(7 7)"/>
+</svg>

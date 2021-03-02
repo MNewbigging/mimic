@@ -17,7 +17,6 @@ class Alerter {
   @observable public alertTitle = '';
   @observable public alertContent = '';
   @observable public alertShowing = false;
-  @observable public gameOverAlert = false;
 
   @action public showAlert(alertProps: AlertProps) {
     this.alertTitle = alertProps.title ?? '';
@@ -27,21 +26,9 @@ class Alerter {
     setTimeout(() => {
       this.hideAlert();
       if (alertProps.onHide) {
-        alertProps.onHide();
+        setTimeout(() => alertProps.onHide(), 300);
       }
     }, alertProps.duration);
-  }
-
-  @action public showGameOverAlert(content: string, title: string) {
-    this.alertTitle = title;
-    this.alertContent = content;
-    this.alertShowing = true;
-    this.gameOverAlert = true;
-  }
-
-  @action public closeGameOverAlert() {
-    this.alertShowing = false;
-    this.gameOverAlert = false;
   }
 
   private readonly hideAlert = () => {
