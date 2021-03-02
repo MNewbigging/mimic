@@ -1,15 +1,15 @@
 import { observer } from 'mobx-react';
 import React from 'react';
 
+import { Dialogs, dialogState } from '../core/DialogState';
 import { GameState } from '../GameState';
+import { GameOverDialog } from './GameOverDialog';
+import { HelpDialog } from './HelpDialog';
 import { LightPanel } from './LightPanel';
 import { PlayerDetails } from './PlayerDetails';
 import { SequencePanel } from './SequencePanel';
 
 import './game-screen.scss';
-import { GameOverDialog } from './GameOverDialog';
-import { Dialogs, dialogState } from '../core/DialogState';
-import { HelpDialog } from './HelpDialog';
 
 interface GameProps {
   state: GameState;

@@ -15,7 +15,8 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  transition: all 0.3s ease-in;
+  border-radius: 5px;
+  transition: all 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955);
   background-color: $color-text-light;
   color: $color-text-dark;
   padding: 30px;
