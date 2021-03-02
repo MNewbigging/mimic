@@ -91,7 +91,6 @@ export class GameState {
   }
 
   @action public receiveMessage(message: BaseMessage) {
-    console.log(`${this.yourPlayerName} received message from ${this.otherPlayerName}: `, message);
     switch (message.type) {
       case MessageType.INIT:
         const initMsg = message as InitMessage;
@@ -245,7 +244,7 @@ export class GameState {
 
   @action private nextRound() {
     this.round++;
-    const title = `Round ${this.round}`;
+    const title = `ROUND ${this.round}`;
     this.roundText = title;
     const starter = this.youAreHost ? this.yourPlayerName : this.otherPlayerName;
 

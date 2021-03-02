@@ -1,3 +1,5 @@
+@import '../mimic-palette.scss';
+
 .light-panel {
   width: 100%;
   height: 100%;
@@ -7,11 +9,44 @@
   align-items: center;
 
   &.active {
-    .light:hover {
-      box-shadow: 0 0 0 2px black;
+    .red:hover {
+      background-color: $color-light-red-on;
     }
-    .light:active {
-      box-shadow: 0 0 0 8px black;
+    .red:active {
+      transition: all 0.1s linear;
+      box-shadow: 0 0 0 5px $color-light-red-on;
+    }
+
+    .green:hover {
+      background-color: $color-light-green-on;
+    }
+    .green:active {
+      transition: all 0.1s linear;
+      box-shadow: 0 0 0 5px $color-light-green-on;
+    }
+
+    .blue:hover {
+      background-color: $color-light-blue-on;
+    }
+    .blue:active {
+      transition: all 0.1s linear;
+      box-shadow: 0 0 0 5px $color-light-blue-on;
+    }
+
+    .orange:hover {
+      background-color: $color-light-orange-on;
+    }
+    .orange:active {
+      transition: all 0.1s linear;
+      box-shadow: 0 0 0 5px $color-light-orange-on;
+    }
+
+    .purple:hover {
+      background-color: $color-light-purple-on;
+    }
+    .purple:active {
+      transition: all 0.1s linear;
+      box-shadow: 0 0 0 5px $color-light-purple-on;
     }
   }
 
@@ -19,42 +54,43 @@
     flex: 0 0 auto;
     width: 100px;
     height: 100px;
+    position: relative;
     border-radius: 50%;
     transition: all 0.2s ease-in;
     animation: none;
 
     &.red {
-      background-color: red;
+      background-color: $color-light-red-off;
       &.flash {
-        animation: redFlash 0.5s ease-in 1;
+        animation: redFlash 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) 1;
       }
     }
 
     &.green {
-      background-color: green;
+      background-color: $color-light-green-off;
       &.flash {
-        animation: greenFlash 0.5s ease-in 1;
+        animation: greenFlash 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) 1;
       }
     }
 
     &.blue {
-      background-color: blue;
+      background-color: $color-light-blue-off;
       &.flash {
-        animation: blueFlash 0.5s ease-in 1;
+        animation: blueFlash 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) 1;
       }
     }
 
     &.orange {
-      background-color: orange;
+      background-color: $color-light-orange-off;
       &.flash {
-        animation: orangeFlash 0.5s ease-in 1;
+        animation: orangeFlash 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) 1;
       }
     }
 
     &.purple {
-      background-color: purple;
+      background-color: $color-light-purple-off;
       &.flash {
-        animation: purpleFlash 0.5s ease-in 1;
+        animation: purpleFlash 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) 1;
       }
     }
   }
@@ -62,70 +98,85 @@
 
 @keyframes redFlash {
   0% {
-    box-shadow: 0 0 0 0 red;
+    background-color: $color-light-red-off;
+    box-shadow: 0 0 0 0 $color-light-red-off;
   }
 
   50% {
-    box-shadow: 0 0 0 10px red;
+    background-color: $color-light-red-on;
+    box-shadow: 0 0 0 9px $color-light-red-on;
   }
 
   100% {
-    box-shadow: 0 0 0 0 red;
+    background-color: $color-light-red-off;
+    box-shadow: 0 0 0 0 $color-light-red-off;
   }
 }
 
 @keyframes greenFlash {
   0% {
-    box-shadow: 0 0 0 0 green;
+    background-color: $color-light-green-off;
+    box-shadow: 0 0 0 0 $color-light-green-off;
   }
 
   50% {
-    box-shadow: 0 0 0 10px green;
+    background-color: $color-light-green-on;
+    box-shadow: 0 0 0 9px $color-light-green-on;
   }
 
   100% {
-    box-shadow: 0 0 0 0 green;
+    background-color: $color-light-green-off;
+    box-shadow: 0 0 0 0 $color-light-green-off;
   }
 }
 
 @keyframes blueFlash {
   0% {
-    box-shadow: 0 0 0 0 blue;
+    background-color: $color-light-blue-off;
+    box-shadow: 0 0 0 0 $color-light-blue-off;
   }
 
   50% {
-    box-shadow: 0 0 0 10px blue;
+    background-color: $color-light-blue-on;
+    box-shadow: 0 0 0 9px $color-light-blue-on;
   }
 
   100% {
-    box-shadow: 0 0 0 0 blue;
+    background-color: $color-light-blue-off;
+    box-shadow: 0 0 0 0 $color-light-blue-off;
   }
 }
 
 @keyframes orangeFlash {
   0% {
-    box-shadow: 0 0 0 0 orange;
+    background-color: $color-light-orange-off;
+    box-shadow: 0 0 0 0 $color-light-orange-off;
   }
 
   50% {
-    box-shadow: 0 0 0 10px orange;
+    background-color: $color-light-orange-on;
+    box-shadow: 0 0 0 9px $color-light-orange-on;
   }
 
   100% {
-    box-shadow: 0 0 0 0 orange;
+    background-color: $color-light-orange-off;
+    box-shadow: 0 0 0 0 $color-light-orange-off;
   }
 }
 
 @keyframes purpleFlash {
   0% {
-    box-shadow: 0 0 0 0 purple;
+    background-color: $color-light-purple-off;
+    box-shadow: 0 0 0 0 $color-light-purple-off;
   }
 
   50% {
-    box-shadow: 0 0 0 10px purple;
+    background-color: $color-light-purple-on;
+    box-shadow: 0 0 0 9px $color-light-purple-on;
   }
 
   100% {
-    box-shadow: 0 0 0 0 purple;
+    background-color: $color-light-purple-off;
+    box-shadow: 0 0 0 0 $color-light-purple-off;
   }
 }

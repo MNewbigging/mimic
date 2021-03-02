@@ -20,8 +20,8 @@ export class Alert extends React.PureComponent<AlertProps> {
 
     return (
       <div className={'alert ' + openClosed}>
-        {title && <div>{title}</div>}
-        <div>{content}</div>
+        {title && <div className={'heading'}>{title}</div>}
+        <div className={'content'}>{content}</div>
         {showEndGameBtns && (
           <div className={'endgame-buttons'}>
             Replay:

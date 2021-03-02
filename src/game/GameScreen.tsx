@@ -27,7 +27,7 @@ export class GameScreen extends React.PureComponent<GameProps> {
             <PlayerDetails name={joinIdOrPlayer} status={state.otherPlayerState} />
           </div>
           <div className={'help-text'}>
-            <div>{state.roundText}</div>
+            <div className={'heading'}>{state.roundText}</div>
             <div>{state.helpText}</div>
           </div>
           <div className={'light-panel-area'}>

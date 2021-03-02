@@ -1,2 +1,28 @@
+@import '../mimic-palette.scss';
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
 .button {
+  font-family: 'Roboto', sans-serif;
+  font-size: 14pt;
+  height: 40px;
+  background-color: $color-text-light;
+  color: $color-text-dark;
+  border-radius: 5px;
+  border: 1px solid $color-bg-light;
+  outline: none;
+  transition: all 0.2s linear;
+
+  &:disabled {
+    color: $color-bg-light;
+    cursor: not-allowed;
+    &:hover {
+      font-size: 13pt;
+      height: 35px;
+    }
+  }
+
+  &:hover {
+    font-size: 15pt;
+    height: 45px;
+  }
 }

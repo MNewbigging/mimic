@@ -1,18 +1,39 @@
+@import '../mimic-palette.scss';
+
 .player-details {
   width: 100%;
   height: 100%;
+  padding: 20px;
 
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
 
   .box {
-    flex: 0 0 40%;
     height: 80%;
-    border: 1px solid black;
 
     display: flex;
     justify-content: center;
     align-items: center;
+
+    &.name {
+      flex: 0 0 auto;
+      font-size: 18pt;
+      color: $color-text-light;
+      justify-self: flex-start;
+    }
+
+    &.status {
+      flex: 0 0 auto;
+      font-size: 13pt;
+
+      .heading {
+        padding: 10px;
+        border: 1px solid $color-text-dark;
+        border-radius: 5px;
+        background-color: $color-text-light;
+        color: $color-text-dark;
+      }
+    }
   }
 }

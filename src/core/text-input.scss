@@ -1,3 +1,11 @@
+@import '../mimic-palette.scss';
+
 .text-input {
+  font-size: 13pt;
+  line-height: 30px;
   text-align: center;
+  color: $color-text-dark;
+  border-radius: 5px;
+  border: none;
+  outline: none;
 }

@@ -15,8 +15,10 @@ export class PlayerDetails extends React.PureComponent<DetailsProps> {
 
     return (
       <div className={'player-details'}>
-        <div className={'box'}>{name}</div>
-        <div className={'box'}>{status}</div>
+        <div className={'box name'}>{name}</div>
+        <div className={'box status'}>
+          <div className={'heading'}>{status}</div>
+        </div>
       </div>
     );
   }

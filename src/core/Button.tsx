@@ -14,7 +14,7 @@ export class Button extends React.PureComponent<ButtonProps> {
     const { text, onClick, disabled, loading } = this.props;
     const btnText = text ?? '';
     const loadingText = 'Loading...';
-    console.log('loading is: ', loading);
+
     return (
       <button className={'button'} type={'button'} onClick={onClick} disabled={disabled ?? false}>
         {loading ? loadingText : btnText}

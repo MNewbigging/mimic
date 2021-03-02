@@ -1,10 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins&family=Roboto&display=swap');
+@import './mimic-palette.scss';
+
 body {
   margin: 0;
   padding: 0;
+  background-color: $color-bg-dark;
 }
 
 * {
   box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+}
+
+.heading {
+  font-family: 'Poppins', sans-serif;
 }
 
 #app-root {

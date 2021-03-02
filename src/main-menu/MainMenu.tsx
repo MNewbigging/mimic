@@ -21,13 +21,13 @@ export class MainMenu extends React.PureComponent<MenuProps> {
       <>
         <div className={'panel left ' + panelClass}>
           <div className={'form'}>
-            <div className={'header'}>HOST</div>
+            <div className={'header heading'}>HOST</div>
             <div className={'body'}>
-              <div>Name</div>
+              <div className={'label'}>Name</div>
               <TextInput text={mState.name} onChange={(text: string) => mState.setName(text)} />
-              <div>Host id</div>
+              <div className={'label'}>Host id</div>
               <TextInput text={mState.hostId} />
-              <div>Starting round</div>
+              <div className={'label'}>Starting round</div>
               <input
                 className={'round-input'}
                 type={'number'}
@@ -49,11 +49,11 @@ export class MainMenu extends React.PureComponent<MenuProps> {
         </div>
         <div className={'panel right ' + panelClass}>
           <div className={'form'}>
-            <div className={'header'}>JOIN</div>
+            <div className={'header heading'}>JOIN</div>
             <div className={'body'}>
-              <div>Name</div>
+              <div className={'label'}>Name</div>
               <TextInput text={mState.name} onChange={(text: string) => mState.setName(text)} />
-              <div>Host id</div>
+              <div className={'label'}>Host id</div>
               <TextInput text={mState.joinId} onChange={(text: string) => mState.setJoinId(text)} />
             </div>
             <div className={'footer'}>

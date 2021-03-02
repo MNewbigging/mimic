@@ -1,3 +1,5 @@
+@import '../mimic-palette.scss';
+
 .game-container {
   width: 100%;
   height: 100%;
@@ -19,7 +21,7 @@
       '... your-player ...';
     grid-template-columns: minmax(0, 50px) minmax(0, 500px) minmax(0, 50px);
     grid-template-rows:
-      minmax(0, 100px) minmax(0, calc(100% - 320px / 2)) minmax(0, 120px) minmax(
+      minmax(0, 100px) minmax(0, calc(100% - 340px / 2)) minmax(0, 140px) minmax(
         0,
         calc(100% - 320px / 2)
       )
@@ -27,24 +29,27 @@
 
     .other-player {
       grid-area: other-player;
-      border-bottom: 1px solid black;
-      border-left: 1px solid black;
-      border-right: 1px solid black;
+      background-color: $color-bg-light;
       border-radius: 0px 0px 5px 5px;
     }
 
     .help-text {
       grid-area: help-text;
+      color: $color-text-light;
+      font-size: 16pt;
 
       display: flex;
       flex-direction: column;
       justify-content: space-evenly;
       align-items: center;
+
+      .heading {
+        font-size: 26pt;
+      }
     }
 
     .light-panel-area {
       grid-area: lights;
-      border: 1px solid black;
     }
 
     .sequence-panel-area {
@@ -58,27 +63,8 @@
 
     .your-player {
       grid-area: your-player;
-      border-top: 1px solid black;
-      border-left: 1px solid black;
-      border-right: 1px solid black;
+      background-color: $color-bg-light;
       border-radius: 5px 5px 0px 0px;
-    }
-
-    .game-body {
-      flex: 1 1 auto;
-      width: 100%;
-
-      display: flex;
-      flex-direction: column;
-      justify-content: space-evenly;
-      align-items: center;
-
-      .light-panel-area {
-        border: 1px solid black;
-        width: 800px;
-        height: 120px;
-        align-self: center;
-      }
     }
   }
 }
