@@ -7,7 +7,6 @@ import {
   BaseMessage,
   InitMessage,
   MessageType,
-  NameMessage,
   ResetMessage,
   ResponseMessage,
   SequenceMessage,
@@ -65,6 +64,7 @@ export class GameState {
   @observable public showSequencePanel = false;
   @observable public round = 0;
   @observable public lightPanelActive = false;
+  @observable public enableSubmitSeqBtn = false;
 
   constructor(yourPlayer: Peer, yourPlayerName: string, startingRound?: number) {
     this.yourPlayer = yourPlayer;
@@ -124,9 +124,21 @@ export class GameState {
     this.yourSequence.pop();
   }
 
+  public disableSubmitSequenceBtn() {
+    if (this.enableSubmitSeqBtn) {
+      if (this.yourSequence.length === this.round) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   public submitSequence() {
     // Prevent further interaction with light panel immediately
     this.lightPanelActive = false;
+
+    // Prevent running this again if clicked more than once
+    this.enableSubmitSeqBtn = false;
 
     // Are we submitting a new sequence or a response to one?
     switch (this.yourCurrentTurnState) {
@@ -196,6 +208,7 @@ export class GameState {
         this.lightPanelActive = true;
         // Update sequence panel
         this.showSequencePanel = true;
+        this.enableSubmitSeqBtn = true;
         // Clear previous sequence
         this.yourSequence = [];
         // Player then builds their sequence, and calls submitSequence when done
@@ -210,6 +223,7 @@ export class GameState {
         this.lightPanelActive = false;
         // Update sequence panel
         this.showSequencePanel = false;
+        this.enableSubmitSeqBtn = false;
         // On receiving a sequence message, will call playSequence
         // That calls nextTurnState on playback end
         break;
@@ -222,6 +236,7 @@ export class GameState {
         this.lightPanelActive = true;
         // Update sequence panel
         this.showSequencePanel = true;
+        this.enableSubmitSeqBtn = true;
         // Clear previous sequence
         this.yourSequence = [];
         // Player then builds response, and calls submitSequence when done
@@ -236,6 +251,7 @@ export class GameState {
         this.lightPanelActive = false;
         // Update sequence panel
         this.showSequencePanel = true;
+        this.enableSubmitSeqBtn = false;
         // On receive a response message, will call playResponse
         // That calls nextTurnState on playback end (if game didn't end)
         break;

@@ -34,7 +34,7 @@ export class SequencePanel extends React.PureComponent<SequenceProps> {
         <Button
           text={'Submit'}
           onClick={() => state.submitSequence()}
-          disabled={state.yourSequence.length !== state.round}
+          disabled={state.disableSubmitSequenceBtn()}
         />
       </div>
     );

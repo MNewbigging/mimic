@@ -14,15 +14,12 @@
 
   &:disabled {
     color: $color-bg-light;
-    cursor: not-allowed;
-    &:hover {
-      font-size: 13pt;
-      height: 35px;
-    }
   }
 
   &:hover {
-    font-size: 15pt;
-    height: 45px;
+    &:disabled {
+      cursor: not-allowed;
+    }
+    cursor: pointer;
   }
 }
