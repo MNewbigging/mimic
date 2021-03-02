@@ -80,14 +80,16 @@ export class GameState {
     // Put to last item, so when we start it'll move to first item
     if (host) {
       this.yourTurnStates = HostTurnStatesArray;
-      this.yourCurrentTurnState = HostTurnStatesArray[HostTurnStatesArray.length - 1];
+      this.yourCurrentTurnState = HostTurnStatesArray[0];
+      this.otherPlayerState = JoinTurnStatesArray[0];
     } else {
       this.yourTurnStates = JoinTurnStatesArray;
-      this.yourCurrentTurnState = JoinTurnStatesArray[JoinTurnStatesArray.length - 1];
+      this.yourCurrentTurnState = JoinTurnStatesArray[0];
+      this.otherPlayerState = HostTurnStatesArray[0];
     }
 
     // Then kick off game
-    setTimeout(() => this.nextTurnState(), 1000);
+    setTimeout(() => this.actionNewTurnState(), 1000);
   }
 
   @action public receiveMessage(message: BaseMessage) {

@@ -3,7 +3,7 @@ import Peer from 'peerjs';
 import { AlertDuration, alerter } from './core/Alerter';
 
 import { GameState, PlayerStatus } from './GameState';
-import { InitMessage, NameMessage } from './Messages';
+import { InitMessage } from './Messages';
 
 export class MimicState {
   // Menu props
