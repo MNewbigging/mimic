@@ -1,0 +1,44 @@
+@import '../mimic-palette.scss';
+
+ul {
+  margin: 0;
+  padding-left: 10px;
+  list-style-type: none;
+
+  li {
+    &:before {
+      content: '● ';
+      font-size: 15pt;
+    }
+
+    &.r {
+      &:before {
+        color: $color-light-red-on;
+      }
+    }
+
+    &.g {
+      &:before {
+        color: $color-light-green-on;
+      }
+    }
+
+    &.b {
+      &:before {
+        color: $color-light-blue-on;
+      }
+    }
+
+    &.o {
+      &:before {
+        color: $color-light-orange-on;
+      }
+    }
+
+    &.p {
+      &:before {
+        color: $color-light-purple-on;
+      }
+    }
+  }
+}

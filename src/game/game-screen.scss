@@ -1,5 +1,29 @@
 @import '../mimic-palette.scss';
 
+.help-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 30px;
+  height: 30px;
+  font-size: 21pt;
+  font-weight: 800;
+  border-radius: 50%;
+  background-color: $color-bg-light;
+  color: $color-bg-dark;
+  transition: all 0.2s ease-in;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:hover {
+    color: $color-text-light;
+    cursor: pointer;
+    box-shadow: 0 0 0 3px $color-bg-light;
+  }
+}
+
 .game-container {
   width: 100%;
   height: 100%;

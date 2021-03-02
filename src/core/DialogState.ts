@@ -3,6 +3,7 @@ import { action, observable } from 'mobx';
 export enum Dialogs {
   NONE,
   GAME_OVER,
+  HELP,
 }
 
 class DialogState {

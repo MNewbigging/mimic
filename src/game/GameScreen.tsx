@@ -8,6 +8,8 @@ import { SequencePanel } from './SequencePanel';
 
 import './game-screen.scss';
 import { GameOverDialog } from './GameOverDialog';
+import { Dialogs, dialogState } from '../core/DialogState';
+import { HelpDialog } from './HelpDialog';
 
 interface GameProps {
   state: GameState;
@@ -24,6 +26,10 @@ export class GameScreen extends React.PureComponent<GameProps> {
     return (
       <>
         <GameOverDialog state={state} />
+        <HelpDialog />
+        <div className={'help-button'} onClick={() => dialogState.showDialog(Dialogs.HELP)}>
+          ?
+        </div>
         <div className={'game-container'}>
           <div className={'game-screen'}>
             <div className={'other-player'}>

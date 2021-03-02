@@ -6,6 +6,7 @@ import { Dialogs, dialogState } from './DialogState';
 import './dialog.scss';
 
 interface DialogProps {
+  type: Dialogs;
   title: string;
   content: JSX.Element;
   actionRail: JSX.Element;
@@ -15,8 +16,8 @@ interface DialogProps {
 @observer
 export class Dialog extends React.PureComponent<DialogProps> {
   public render() {
-    const { title, content, actionRail, canClickOutsideClose } = this.props;
-    const show = dialogState.activeDialog === Dialogs.GAME_OVER;
+    const { type, title, content, actionRail, canClickOutsideClose } = this.props;
+    const show = dialogState.activeDialog === type;
     const openClose = show ? 'open' : 'closed';
     const outsideClick = canClickOutsideClose ?? false;
 

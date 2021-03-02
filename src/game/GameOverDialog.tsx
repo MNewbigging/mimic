@@ -3,6 +3,7 @@ import React from 'react';
 
 import { Button } from '../core/Button';
 import { Dialog } from '../core/Dialog';
+import { Dialogs } from '../core/DialogState';
 import { GameState } from '../GameState';
 
 import './game-over-dialog.scss';
@@ -16,6 +17,7 @@ export class GameOverDialog extends React.PureComponent<GODProps> {
   public render() {
     return (
       <Dialog
+        type={Dialogs.GAME_OVER}
         title={'GAME OVER!'}
         content={this.renderContent()}
         actionRail={this.renderActionRail()}
