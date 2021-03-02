@@ -39,10 +39,6 @@ export class MimicState {
     this.name = name;
   }
 
-  @action public setHostId(id: string) {
-    this.hostId = id;
-  }
-
   @action public setJoinId(id: string) {
     this.joinId = id;
   }

@@ -75,6 +75,34 @@
       .text-input {
         margin-bottom: 15px;
       }
+
+      .host-id {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+
+        .text-input {
+          margin: 0;
+        }
+
+        .share-btn {
+          height: 32px;
+          width: 30px;
+          padding: 4px 5px 5px 5px;
+          margin-left: 2px;
+          border: none;
+          outline: none;
+          border-radius: 5px;
+
+          &:hover {
+            cursor: pointer;
+          }
+
+          svg {
+            fill: $color-bg-dark;
+          }
+        }
+      }
     }
 
     .footer {
@@ -97,4 +125,5 @@
   border: none;
   outline: none;
   color: $color-text-dark;
+  background-color: $color-text-light;
 }

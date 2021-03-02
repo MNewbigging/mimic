@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react';
 import React from 'react';
+import { HashRouter, Route, Switch } from 'react-router-dom';
 
 import { Alert } from './core/Alert';
 import { alerter } from './core/Alerter';
@@ -11,6 +12,8 @@ import { MimicState } from './MimicState';
 export class Mimic extends React.PureComponent {
   private readonly mState = new MimicState();
   public render() {
+    this.parseUrlHash();
+
     return (
       <>
         <Alert
@@ -20,9 +23,24 @@ export class Mimic extends React.PureComponent {
           showEndGameBtns={alerter.gameOverAlert}
           onReplayClick={(start: boolean) => this.mState.gameState?.replayGame(start)}
         />
-        <MainMenu mState={this.mState} />
+        <HashRouter>
+          <Switch>
+            <Route render={() => <MainMenu mState={this.mState} />} />
+          </Switch>
+        </HashRouter>
         {this.mState.gameState && <GameScreen state={this.mState.gameState} />}
       </>
     );
+  }
+
+  private parseUrlHash() {
+    const query = window.location.hash;
+    // See if we've been given a join id
+    // If so, url will be of format: base/#/joinId=123joinId456
+    const splitQuery = query.split('=');
+    if (splitQuery.length === 2) {
+      const joinId = splitQuery[1];
+      this.mState.setJoinId(joinId);
+    }
   }
 }

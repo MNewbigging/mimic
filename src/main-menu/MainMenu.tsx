@@ -5,14 +5,17 @@ import { Button } from '../core/Button';
 import { TextInput } from '../core/TextInput';
 import { MimicState } from '../MimicState';
 
+import ShareBtn from '../../dist/share.svg';
+
 import './main-menu.scss';
+import { AlertDuration, alerter } from '../core/Alerter';
 
 interface MenuProps {
   mState: MimicState;
 }
 
 @observer
-export class MainMenu extends React.PureComponent<MenuProps> {
+export class MainMenu extends React.Component<MenuProps> {
   public render() {
     const { mState } = this.props;
     const panelClass = mState.menuOpen ? 'open' : 'closed';
@@ -26,7 +29,13 @@ export class MainMenu extends React.PureComponent<MenuProps> {
               <div className={'label'}>Name</div>
               <TextInput text={mState.name} onChange={(text: string) => mState.setName(text)} />
               <div className={'label'}>Host id</div>
-              <TextInput text={mState.hostId} />
+              <div className={'host-id'}>
+                <TextInput text={mState.hostId} />
+                <button className={'share-btn'} onClick={() => this.copyToClipboard()}>
+                  <ShareBtn />
+                </button>
+              </div>
+
               <div className={'label'}>Starting round</div>
               <input
                 className={'round-input'}
@@ -68,5 +77,19 @@ export class MainMenu extends React.PureComponent<MenuProps> {
         </div>
       </>
     );
+  }
+
+  private async copyToClipboard() {
+    try {
+      const inviteLink = `https://mnewbigging.github.io/mimic/#/joinId=${this.props.mState.hostId}`;
+      await navigator.clipboard.writeText(inviteLink);
+      alerter.showAlert({
+        title: '',
+        content: 'Invite link copied!',
+        duration: AlertDuration.QUICK,
+      });
+    } catch (err) {
+      console.log('could not copy to cb', err);
+    }
   }
 }
